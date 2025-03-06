@@ -1,1 +1,1 @@
-# Leave-Management-System-for-Institution
+# Leave Management System for Educational Institution
