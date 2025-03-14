@@ -26,10 +26,10 @@ const Login = () => {
                 <h2>LOGIN</h2>
                 <form>
                     <label>Email</label>
-                    <input type="email" placeholder="Enter Email" required />
+                    <input type="email" placeholder="Enter Email" name="email" required />
                     
                     <label>Password</label>
-                    <input type="password" placeholder="Enter Password" required />
+                    <input type="password" placeholder="Enter Password" name="password" required />
 
                     <div className="captcha">
                         <FaSyncAlt className="refresh-icon" onClick={refreshCaptcha} />

@@ -1,11 +1,34 @@
 import express from 'express';
 import db from './db.js';
+import bodyParser from "body-parser";
+import bcrypt from "bcrypt";
+import passport from "passport";
+import { Strategy } from "passport-local";
+import session from "express-session";
+import env from "dotenv";
+
 
 const app = express()
 
+const saltRounds = 10;
+env.config();
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static("public"));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(express.json());
 
-// 🔹 Function to Generate Next ID
+// Function to Generate Next ID
 const generateNextId = async (column, prefix, table) => {
     try {
         const result = await db.query(`SELECT ${column} FROM ${table} ORDER BY ${column} DESC LIMIT 1`);
@@ -23,9 +46,10 @@ const generateNextId = async (column, prefix, table) => {
     }
 };
 
-// 🔹 Generate Employee (Use Default Values)
+// Generate Employee (Use Default Values)
+// take all fields of employee details from form input
 app.post('/generate-employee', async (req, res) => {
-    const { email } = req.body;
+    const { email , password } = req.body;
     const defaultPassword = "Welcome@123"; // Default password
     const defaultName = "Pending Registration"; // Placeholder name
     const currentDate = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
