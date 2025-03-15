@@ -16,7 +16,6 @@ body {
     height: 100vh;
     flex-direction: column;
 }
-/* Style for the dropdown */
 select {
     padding: 8px;
     margin: 5px 0;
@@ -26,6 +25,9 @@ select {
     font-size: 14px;
     background: white;
     color: black;
+    width: 100%; /* Ensures it matches input width */
+    box-sizing: border-box; /* Prevents width issues */
+    height: 36px; /* Matches input height */
 }
 
 /* Title Box - Full Width with Blur Effect */

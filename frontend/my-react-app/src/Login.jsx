@@ -44,6 +44,8 @@ const Login = () => {
             </div>
             <div className="login-box">
                 <h2>LOGIN</h2>
+                
+                <form onSubmit={handleLogin}>
                 <label>Login As</label>
                     <select value={role} onChange={(e) => setRole(e.target.value)} required>
                         <option value="">Select Role</option>
@@ -52,7 +54,6 @@ const Login = () => {
                         <option value="Faculty">Faculty</option>
                         <option value="Office Admin">Office Admin</option>
                     </select>
-                <form onSubmit={handleLogin}>
                     <label>Email</label>
                     <input 
                         type="email" 
@@ -70,9 +71,6 @@ const Login = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         required 
                     />
-
-                    
-
                     <div className="captcha">
                         <FaSyncAlt className="refresh-icon" onClick={refreshCaptcha} />
                         <span>{captcha.question}</span>
