@@ -82,11 +82,10 @@ const generatePassword = () => {
 
 // Register Employee (by admin)
 app.post("/register-employee", async (req, res) => {
-  const { name, date_of_joining } = req.body;
+  const { name, email, date_of_joining } = req.body;
   const created_at = new Date();
   console.log(req.body)
   const employees_id = await generateNextId('employees_id', 'EMP', 'employees');
-  const email = `${name.toLowerCase().replace(/\s/g, '')}.${employees_id}@${process.env.UNIVERSITY_DOMAIN}`;
   const password = generatePassword();
   console.log(password)
 
@@ -108,7 +107,7 @@ app.post("/register-employee", async (req, res) => {
         );
 
         // Send email with the generated password
-      //  await sendEmail(email, password);
+        await sendEmail(email, password);
 
         res.json({ message: "Employee registered", email, password });
       }
