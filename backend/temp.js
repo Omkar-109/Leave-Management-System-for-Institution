@@ -52,7 +52,9 @@ const generateNextId = async (column, prefix, table) => {
 
 // Configure the email transport using your email service (like Gmail or an SMTP server)
 const transporter = nodemailer.createTransport({
-  service: 'gmail', // or use your preferred email service
+  service: 'gmail', // email service
+  secure: true,
+  port: 465,
   auth: {
     user: process.env.EMAIL_USERNAME, // Your email username
     pass: process.env.EMAIL_PASSWORD, // Your email password (or App Password if 2FA is enabled)
@@ -65,11 +67,12 @@ const sendEmail = async (email, password) => {
     from: process.env.EMAIL_USERNAME, // Sender email
     to: email, // Recipient email
     subject: "Your Account Details", // Subject of the email
-    text: `Hello,\n\nYour account has been created successfully. Your password is: ${password}\n\nPlease change it after logging in.\n\nRegards,\nYour Company`, // Email body
+    text: `Hello,\n\nYour account for leave management system has been created successfully. Your password is: ${password}\n\nPlease change it after logging in.\n\nRegards,\nYour Company`, // Email body
   };
 
   try {
     await transporter.sendMail(mailOptions);
+
   } catch (error) {
     console.error("Error sending email:", error);
   }
@@ -139,7 +142,7 @@ app.post("/register-dean", async (req, res) => {
         );
 
         // Send email with the generated password
-      //  await sendEmail(email, password);
+        await sendEmail(email, password);
 
         res.json({ message: "Dean registered", email, password });
       }
@@ -171,7 +174,7 @@ app.post("/register-program-director", async (req, res) => {
         );
 
         // Send email with the generated password
-      //  await sendEmail(email, password);
+        await sendEmail(email, password);
 
         res.json({ message: "Program Director registered", email, password });
       }
@@ -246,7 +249,7 @@ passport.use(
       switch (type) {
         case "Dean":
         case "Program Director":
-          query = `SELECT * FROM "roleCredentials" WHERE email = $1 AND role_type = $2`;
+          query = `SELECT * FROM roleCredentials WHERE email = $1 AND role_type = $2`;
           params = [email, type];
           break;
         case "Office Admin":
@@ -282,7 +285,7 @@ passport.serializeUser((user, cb) => {
 passport.deserializeUser(async (email, cb) => {
   try {
     const result = await db.query(
-      "SELECT * FROM credentials WHERE email = $1 UNION SELECT * FROM admins WHERE email = $1 UNION SELECT * FROM roleCredentials WHERE email = $1",
+      "SELECT email, password, 'employee' AS role_type FROM credentials WHERE email = $1 UNION SELECT email, password, 'office admin' AS role_type FROM admins WHERE email = $1 UNION SELECT email, password, role_type FROM roleCredentials WHERE email = $1",
       [email]
     );
     if (result.rows.length > 0) {
@@ -295,11 +298,6 @@ passport.deserializeUser(async (email, cb) => {
   }
 });
 
-app.post("/login", passport.authenticate("local", {
-    successRedirect: "/homepage",
-    failureRedirect: "/login",
-  })
-);
 
 app.get("/logout", (req, res) => {
   req.logout((err) => {
@@ -307,6 +305,22 @@ app.get("/logout", (req, res) => {
     res.redirect("/");
   });
 });
+
+
+
+app.post("/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) return next(err);
+    if (!user) return res.status(401).json({ error: "Invalid credentials" });
+
+    req.logIn(user, (err) => {
+      if (err) return next(err);
+      res.json({ message: "Login successful", user });
+    });
+  })(req, res, next);
+});
+
+
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
