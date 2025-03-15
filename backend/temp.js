@@ -23,6 +23,7 @@ app.use(
   })
 );
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json()); 
 app.use(express.static("public"));
 
 app.use(passport.initialize());
@@ -83,6 +84,7 @@ const generatePassword = () => {
 app.post("/register-employee", async (req, res) => {
   const { name, date_of_joining } = req.body;
   const created_at = new Date();
+  console.log(req.body)
   const employees_id = await generateNextId('employees_id', 'EMP', 'employees');
   const email = `${name.toLowerCase().replace(/\s/g, '')}.${employees_id}@${process.env.UNIVERSITY_DOMAIN}`;
   const password = generatePassword();
