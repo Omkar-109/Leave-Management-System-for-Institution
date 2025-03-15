@@ -1,35 +1,76 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./styles/Login.css";
 import { FaSyncAlt } from "react-icons/fa";
+
+const generateCaptcha = () => {
+    const num1 = Math.floor(Math.random() * 10) + 10;
+    const num2 = Math.floor(Math.random() * 10);
+    return { question: `${num1} + ${num2} =`, answer: num1 + num2 };
+};
 
 const Login = () => {
     const [captcha, setCaptcha] = useState(generateCaptcha());
     const [userCaptcha, setUserCaptcha] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [role, setRole] = useState("");
 
-    function generateCaptcha() {
-        const num1 = Math.floor(Math.random() * 10) + 10;
-        const num2 = Math.floor(Math.random() * 10);
-        return { question: `${num1} + ${num2} =`, answer: num1 + num2 };
-    }
+    useEffect(() => {
+        setCaptcha(generateCaptcha());
+    }, []);
 
     const refreshCaptcha = () => {
         setCaptcha(generateCaptcha());
         setUserCaptcha("");
     };
 
+    const handleLogin = (e) => {
+        e.preventDefault();
+        if (!role) {
+            alert("Please select your role.");
+            return;
+        }
+        if (parseInt(userCaptcha) !== captcha.answer) {
+            alert("Incorrect Captcha. Please try again!");
+            return;
+        }
+        alert(`Login successful for ${email} as ${role}`);
+    };
+
     return (
         <div className="container">
-             <div className="title-box">
+            <div className="title-box">
                 <h1>University</h1>
             </div>
             <div className="login-box">
                 <h2>LOGIN</h2>
-                <form>
+                <form onSubmit={handleLogin}>
                     <label>Email</label>
-                    <input type="email" placeholder="Enter Email" name="email" required />
+                    <input 
+                        type="email" 
+                        placeholder="Enter Email" 
+                        value={email} 
+                        onChange={(e) => setEmail(e.target.value)}
+                        required 
+                    />
                     
                     <label>Password</label>
-                    <input type="password" placeholder="Enter Password" name="password" required />
+                    <input 
+                        type="password" 
+                        placeholder="Enter Password" 
+                        value={password} 
+                        onChange={(e) => setPassword(e.target.value)}
+                        required 
+                    />
+
+                    <label>Login As</label>
+                    <select value={role} onChange={(e) => setRole(e.target.value)} required>
+                        <option value="">Select Role</option>
+                        <option value="Dean">Dean</option>
+                        <option value="Program Director">Program Director</option>
+                        <option value="Faculty">Faculty</option>
+                        <option value="Office Admin">Office Admin</option>
+                    </select>
 
                     <div className="captcha">
                         <FaSyncAlt className="refresh-icon" onClick={refreshCaptcha} />

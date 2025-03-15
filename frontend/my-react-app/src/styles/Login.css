@@ -16,6 +16,17 @@ body {
     height: 100vh;
     flex-direction: column;
 }
+/* Style for the dropdown */
+select {
+    padding: 8px;
+    margin: 5px 0;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+    font-size: 14px;
+    background: white;
+    color: black;
+}
 
 /* Title Box - Full Width with Blur Effect */
 .title-box {
@@ -46,7 +57,7 @@ body {
     text-align: center;
     width: 300px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    margin-top: 20px; /* Adjusted to prevent overlap with title */
+    margin-top: 50px; /* Adjusted to prevent overlap with title */
 }
 
 /* Form Fields */
