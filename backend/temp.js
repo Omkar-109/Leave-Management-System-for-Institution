@@ -88,6 +88,7 @@ app.post("/register-employee", async (req, res) => {
   const employees_id = await generateNextId('employees_id', 'EMP', 'employees');
   const email = `${name.toLowerCase().replace(/\s/g, '')}.${employees_id}@${process.env.UNIVERSITY_DOMAIN}`;
   const password = generatePassword();
+  console.log(password)
 
   try {
     await db.query(
@@ -107,7 +108,7 @@ app.post("/register-employee", async (req, res) => {
         );
 
         // Send email with the generated password
-        await sendEmail(email, password);
+      //  await sendEmail(email, password);
 
         res.json({ message: "Employee registered", email, password });
       }
@@ -139,7 +140,7 @@ app.post("/register-dean", async (req, res) => {
         );
 
         // Send email with the generated password
-        await sendEmail(email, password);
+      //  await sendEmail(email, password);
 
         res.json({ message: "Dean registered", email, password });
       }
@@ -171,7 +172,7 @@ app.post("/register-program-director", async (req, res) => {
         );
 
         // Send email with the generated password
-        await sendEmail(email, password);
+      //  await sendEmail(email, password);
 
         res.json({ message: "Program Director registered", email, password });
       }
@@ -184,33 +185,57 @@ app.post("/register-program-director", async (req, res) => {
 
 // First-time employee registration
 app.post("/register", async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, newpassword } = req.body;
   try {
+    // Step 1: Retrieve the user from the database by email
     const result = await db.query(
       "SELECT * FROM credentials WHERE email = $1",
       [email]
     );
 
     if (result.rows.length > 0) {
-      bcrypt.hash(password, saltRounds, async (err, hash) => {
+      const user = result.rows[0];
+
+      // Step 2: Check if the current password matches the one in the database
+      bcrypt.compare(password, user.password, async (err, valid) => {
         if (err) {
-          console.error("Error hashing password:", err);
+          console.error("Error comparing passwords:", err);
+          return res.status(500).json({ error: "Error comparing passwords" });
+        }
+
+        if (valid) {
+          console.log(newpassword)
+          // Step 3: If passwords match, hash the new password
+          bcrypt.hash(newpassword, saltRounds, async (err, hash) => {
+            if (err) {
+              console.error("Error hashing new password:", err);
+              return res.status(500).json({ error: "Error hashing new password" });
+            }
+
+            // Step 4: Update the password in the database
+            await db.query(
+              "UPDATE credentials SET password = $1 WHERE email = $2",
+              [hash, email]
+            );
+            
+            // Step 5: Respond with success message
+            res.json({ message: "Password updated successfully" });
+          });
         } else {
-          await db.query(
-            "UPDATE credentials SET password = $1 WHERE email = $2",
-            [hash, email]
-          );
-          res.redirect("/login");
+          // If the current password is incorrect
+          res.status(400).json({ error: "Incorrect current password" });
         }
       });
     } else {
+      // If the user does not exist
       res.status(400).json({ error: "Employee not found" });
-    }               
+    }
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Registration failed" });
+    res.status(500).json({ error: "Password update failed" });
   }
 });
+
 
 // Login - Handles different user types
 passport.use(
