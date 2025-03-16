@@ -46,51 +46,8 @@ const generateNextId = async (column, prefix, table) => {
     }
 };
 
-// Generate Employee (Use Default Values)
-// take all fields of employee details from form input
-app.post('/generate-employee', async (req, res) => {
-    const { email , password } = req.body;
-    const defaultPassword = "Welcome@123"; // Default password
-    const defaultName = "Pending Registration"; // Placeholder name
-    const currentDate = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
-
-    try {
-        const employee_id = await generateNextId('employees_id', 'E', 'employees');
-        const credential_id = await generateNextId('credential_id', 'C', 'credentials');
-
-        // Check if email already exists
-        const checkEmail = await db.query(`SELECT * FROM employees WHERE email = $1`, [email]);
-        if (checkEmail.rows.length > 0) {
-            return res.status(400).json({ error: 'Email already exists' });
-        }
-
-        // Insert into employees table (Provide default values)
-        const empResult = await db.query(
-            `INSERT INTO employees (employees_id, name, email, password, date_of_joining, created_at)
-            VALUES ($1, $2, $3, $4, $5, $5) RETURNING *`,
-            [employee_id, defaultName, email, defaultPassword, currentDate]
-        );
-
-        // Insert into credentials table
-        await db.query(
-            `INSERT INTO credentials (credential_id, employee_id, email, password, created_at)
-            VALUES ($1, $2, $3, $4, NOW())`,
-            [credential_id, employee_id, email, defaultPassword]
-        );
-
-        res.status(201).json({
-            message: 'Employee created successfully. Use provided email and default password to register.',
-            employee: empResult.rows[0]
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Failed to generate employee', details: error.message });
-    }
-});
-
 
 // routes to add programs 
-
 app.post('/programs', async (req, res) => {
     const { program_name } = req.body;
   
@@ -107,9 +64,8 @@ app.post('/programs', async (req, res) => {
       res.status(500).json({ error: "Internal Server Error" });
     }
 });
-
-//test with
-//{"program_name": "SE"}
+//test
+//{"program_name": "MCA"}
 
 
 
