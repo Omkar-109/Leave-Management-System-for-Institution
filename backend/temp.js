@@ -84,7 +84,7 @@ const generatePassword = () => {
 };
 
 // Register Employee (by admin)
-app.post("/register-employee", async (req, res) => {
+app.post('/register-employee', async (req, res) => {
   const { name, email, date_of_joining } = req.body;
   const created_at = new Date();
   console.log(req.body)
