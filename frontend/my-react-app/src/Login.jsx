@@ -38,15 +38,15 @@ const Login = () => {
         }
 
         try {
-            const response = await fetch("http://localhost:5000/login", { // Adjust URL if needed
+            const response = await fetch("http://localhost:3000/login", { // Adjust URL if needed
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ email, password, role }),
                 credentials: "include", // Required for session-based authentication
             });
-
+            
             const data = await response.json();
-
+            
             if (!response.ok) {
                 throw new Error(data.error || "Login failed");
             }
@@ -75,7 +75,7 @@ const Login = () => {
                         <option value="">Select Role</option>
                         <option value="Dean">Dean</option>
                         <option value="Program Director">Program Director</option>
-                        <option value="Faculty">Faculty</option>
+                        <option value="Faculty">Employee</option>
                         <option value="Office Admin">Office Admin</option>
                     </select>
 
