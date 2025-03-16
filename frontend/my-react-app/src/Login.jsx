@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import for navigation
 import "./styles/Login.css";
 import { FaSyncAlt } from "react-icons/fa";
 
@@ -14,27 +15,48 @@ const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [role, setRole] = useState("");
-
-    useEffect(() => {
-        setCaptcha(generateCaptcha());
-    }, []);
+    const [error, setError] = useState("");
+    
+    const navigate = useNavigate(); // Hook for navigation
 
     const refreshCaptcha = () => {
         setCaptcha(generateCaptcha());
         setUserCaptcha("");
     };
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
+        setError("");
+
         if (!role) {
-            alert("Please select your role.");
+            setError("Please select your role.");
             return;
         }
         if (parseInt(userCaptcha) !== captcha.answer) {
-            alert("Incorrect Captcha. Please try again!");
+            setError("Incorrect Captcha. Please try again!");
             return;
         }
-        alert(`Login successful for ${email} as ${role}`);
+
+        try {
+            const response = await fetch("http://localhost:5000/login", { // Adjust URL if needed
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+                credentials: "include", // Required for session-based authentication
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || "Login failed");
+            }
+
+            alert("Login successful!");
+            navigate("/home", { state: { user: data.user } }); // Redirect to Home with user data
+
+        } catch (error) {
+            setError(error.message);
+        }
     };
 
     return (
@@ -45,8 +67,10 @@ const Login = () => {
             <div className="login-box">
                 <h2>LOGIN</h2>
                 
+                {error && <p className="error-message">{error}</p>}
+
                 <form onSubmit={handleLogin}>
-                <label>Login As</label>
+                    <label>Login As</label>
                     <select value={role} onChange={(e) => setRole(e.target.value)} required>
                         <option value="">Select Role</option>
                         <option value="Dean">Dean</option>
@@ -54,6 +78,7 @@ const Login = () => {
                         <option value="Faculty">Faculty</option>
                         <option value="Office Admin">Office Admin</option>
                     </select>
+
                     <label>Email</label>
                     <input 
                         type="email" 
@@ -71,11 +96,12 @@ const Login = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         required 
                     />
+                    
                     <div className="captcha">
                         <FaSyncAlt className="refresh-icon" onClick={refreshCaptcha} />
                         <span>{captcha.question}</span>
                         <input
-                            type="text"
+                            type="number"
                             placeholder="Answer"
                             value={userCaptcha}
                             onChange={(e) => setUserCaptcha(e.target.value)}
@@ -83,7 +109,7 @@ const Login = () => {
                         />
                     </div>
 
-                    <button type="submit">LOGIN</button>
+                    <button type="submit" disabled={!email || !password || !role || !userCaptcha}>LOGIN</button>
                 </form>
                 <p className="forgot"><a href="#">Forgot password?</a></p>
             </div>
