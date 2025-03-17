@@ -8,11 +8,18 @@ import session from "express-session";
 import env from "dotenv";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
+import cors from "cors";
 
 const app = express();
 const port = 3000;
 const saltRounds = 10;
 env.config();
+
+app.use(cors({
+  origin: 'http://localhost:5173', // Replace with your frontend's port
+  credentials: true
+}));
+
 
 app.use(
   session({
