@@ -36,7 +36,7 @@ select {
     top: 0;
     left: 0;
     width: 100%;
-    background: rgba(255, 255, 255, 0.6); /* Semi-transparent background */
+    background: rgba(0, 17, 255, 0.6); /* Semi-transparent background */
     backdrop-filter: blur(15px); /* Stronger blur effect */
     padding: 15px 0;
     text-align: center;
@@ -53,7 +53,8 @@ select {
 
 /* Login Box */
 .login-box {
-    background: rgba(255, 140, 0);
+    background: rgba(172, 184, 237, 0.7);
+    backdrop-filter: blur(15px);
     padding: 20px;
     border-radius: 10px;
     text-align: center;
