@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import for navigation
+import { useNavigate } from "react-router-dom";
 import "./styles/Login.css";
 import { FaSyncAlt } from "react-icons/fa";
 
@@ -16,8 +16,8 @@ const Login = () => {
     const [password, setPassword] = useState("");
     const [role, setRole] = useState("");
     const [error, setError] = useState("");
-    
-    const navigate = useNavigate(); // Hook for navigation
+
+    const navigate = useNavigate();
 
     const refreshCaptcha = () => {
         setCaptcha(generateCaptcha());
@@ -38,20 +38,29 @@ const Login = () => {
         }
 
         try {
-            const response = await fetch("http://localhost:3000/login", { // Adjust URL if needed
+            const response = await fetch("http://localhost:3000/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password, role }),
-                credentials: "include", // Required for session-based authentication
+                credentials: "include",
             });
-            
+
             const data = await response.json();
-            
+
             if (!response.ok) {
                 throw new Error(data.error || "Login failed");
             }
 
-            navigate("/home", { state: { user: data.user } }); // Redirect to Home without alert
+            // Redirect based on role
+            if (role === "Dean") {
+                navigate("/dean-dashboard", { state: { user: data.user } });
+            } else if (role === "Program Director") {
+                navigate("/pd-dashboard", { state: { user: data.user } });
+            } else if (role === "Faculty" || role === "Office Admin") {
+                navigate("/employee-dashboard", { state: { user: data.user } });
+            } else {
+                navigate("/home", { state: { user: data.user } });
+            }
 
         } catch (error) {
             setError(error.message);
@@ -61,7 +70,7 @@ const Login = () => {
     return (
         <div className="container">
             <div className="title-box">
-                <h1>University</h1>
+                <h1>University Leave Management</h1>
             </div>
             <div className="login-box">
                 <h2>LOGIN</h2>
