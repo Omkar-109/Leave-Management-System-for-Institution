@@ -1,11 +1,11 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/Employee.css";
+import "./styles/Employee.css";
 
 const EmployeeDashboard = () => {
     const navigate = useNavigate();
 
-    return (
+    return (    
         <div className="container">
             <div className="dashboard">
                 <h1>Employee Dashboard</h1>

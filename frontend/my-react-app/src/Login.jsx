@@ -70,7 +70,7 @@ const Login = () => {
     return (
         <div className="container">
             <div className="title-box">
-                <h1>University Leave Management</h1>
+                <h1>University</h1>
             </div>
             <div className="login-box">
                 <h2>LOGIN</h2>
