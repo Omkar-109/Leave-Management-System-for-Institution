@@ -51,8 +51,7 @@ const Login = () => {
                 throw new Error(data.error || "Login failed");
             }
 
-            alert("Login successful!");
-            navigate("/home", { state: { user: data.user } }); // Redirect to Home with user data
+            navigate("/home", { state: { user: data.user } }); // Redirect to Home without alert
 
         } catch (error) {
             setError(error.message);
