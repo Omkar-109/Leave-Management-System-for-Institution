@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const Home = () => {
+function Home() {
     const location = useLocation();
     const navigate = useNavigate();
     const user = location.state?.user;
@@ -18,6 +18,7 @@ const Home = () => {
             {user && <p>Role: {user.role}</p>}
         </div>
     );
+    
 };
 
 export default Home;
