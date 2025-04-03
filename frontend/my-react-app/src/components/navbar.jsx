@@ -8,7 +8,7 @@ const Navbar = ({ user }) => {
 
     const handleLogout = () => {
         localStorage.removeItem("user"); // Clear session
-        navigate("/", { replace: true });// Redirect to login
+        navigate("/", { replace: true }); // Redirect to login
     };
 
     return (
@@ -20,7 +20,7 @@ const Navbar = ({ user }) => {
                     className="user-btn" 
                     onClick={() => setDropdownOpen(!isDropdownOpen)}
                 >
-                    {user?.email || "User"} ▼
+                    {user?.name || "User"} ▼
                 </button>
 
                 {isDropdownOpen && (
