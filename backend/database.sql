@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS public."adminActions"
         ON DELETE NO ACTION
 )
 
-TABLESPACE pg_default;
+TABLESPACE pg_default; 
 
 ALTER TABLE IF EXISTS public."adminActions"
     OWNER to postgres;
