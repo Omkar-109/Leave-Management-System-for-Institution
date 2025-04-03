@@ -1,22 +1,3 @@
-/* Employee Dashboard Styling */
-.employee-dashboard {
-    background: white;
-    min-height: 100vh;
-}
-
-.dashboard-container {
-    text-align: center;
-    padding: 20px;
-}
-/* Card Container */
-.card-container {
-    display: flex;
-    justify-content: left;
-    gap: 20px;
-    margin-top: 20px;
-}
-
-/* Individual Card */
 .card {
     background: #99c7f4;
     border-radius: 10px;
@@ -33,7 +14,7 @@
 }
 
 .card:hover {
-    background: #e0e0e0;
+    background: #5c5b5b;
     transform: translateY(-5px);
 }
 

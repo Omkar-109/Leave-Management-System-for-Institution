@@ -1,18 +1,22 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import Navbar from "./components/navbar.jsx"; // Import Navbar
+import Card from "./components/card.jsx"; // Import reusable Card component
 import "./styles/Employee.css";
 
-const EmployeeDashboard = () => {
+const EmployeeDashboard = ({ user }) => {
     const navigate = useNavigate();
 
-    return (    
-        <div className="container">
-            <div className="dashboard">
-                <h1>Employee Dashboard</h1>
-                <div className="button-container">
-                    <div className="button" onClick={() => navigate("/apply-leave")}>Apply for Leave</div>
-                    <div className="button" onClick={() => navigate("/view-leaves")}>View Leave Applications</div>
-                    <div className="button" onClick={() => navigate("/manage-account")}>Manage Account</div>
+    return (
+        <div className="employee-dashboard">
+            {/* Navbar with user info */}
+            <Navbar user={user} />
+
+            <div className="dashboard-container">
+                <div className="card-container">
+                    <Card title="Apply for Leave" onClick={() => navigate("/apply-leave")} />
+                    <Card title="View Leave Applications" onClick={() => navigate("/view-leaves")} />
+
                 </div>
             </div>
         </div>
