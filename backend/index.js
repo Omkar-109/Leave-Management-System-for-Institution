@@ -729,6 +729,79 @@ app.get('/leaves', async (req, res) => {
 });
 
 
+// GET all leave applications approved by PD but pending for Dean
+app.get('/leave/pending/dean', async (req, res) => {
+  try {
+      const query = `
+          SELECT * FROM leave 
+          WHERE program_director_status = 'approved' 
+            AND dean_status = 'pending'
+      `;
+      const result = await db.query(query);
+      res.status(200).json(result.rows);
+  } catch (error) {
+      console.error('Error fetching pending leave applications for Dean:', error.message);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// PUT: Update leave status by Dean or PD
+app.put('/leave/update-status', async (req, res) => {
+  const { leave_id, role, status } = req.body;
+
+  if (!leave_id || !role || !status) {
+      return res.status(400).json({ message: 'leave_id, role, and status are required.' });
+  }
+
+  try {
+      let columnToUpdate = null;
+
+      if (role === 'dean') {
+          columnToUpdate = 'dean_status';
+      } else if (role === 'pd') {
+          columnToUpdate = 'program_director_status';
+      } else {
+          return res.status(400).json({ message: 'Invalid role. Use "dean" or "pd".' });
+      }
+
+      const query = `
+          UPDATE public.leave
+          SET ${columnToUpdate} = $1, updated_at = CURRENT_DATE
+          WHERE leave_id = $2
+      `;
+      await db.query(query, [status, leave_id]);
+
+      return res.status(200).json({ message: `${role}'s status updated to ${status}` });
+  } catch (error) {
+      console.error('Error updating leave status:', error.message);
+      return res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+app.get('/leave/pending', async (req, res) => {
+  try {
+      const result = await db.query(`
+          SELECT *
+          FROM public.leave
+          WHERE program_director_status ILIKE 'pending'
+             OR dean_status ILIKE 'pending'
+             OR status ILIKE 'pending'
+          ORDER BY created_at DESC
+      `);
+
+      if (result.rows.length === 0) {
+          return res.status(404).json({ message: 'No pending leave applications found.' });
+      }
+
+      res.status(200).json(result.rows);
+  } catch (error) {
+      console.error('Error fetching pending leave applications:', error.message);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
