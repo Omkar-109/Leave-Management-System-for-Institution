@@ -1,11 +1,11 @@
 .card {
-    background: #99c7f4;
-    border-radius: 10px;
-    padding: 20px;
+    background: #FFCE63;
+    border-radius: 50px;
+    padding: 5px;
     width: 250px;
-    height: 100px;
+    height: 50px;
     display: flex; /* Enable flexbox */
-    justify-content: left; /* Center horizontally */
+    justify-content:center; /* Center horizontally */
     align-items: center; /* Center vertically */
     text-align: center;
     cursor: pointer;
@@ -14,11 +14,12 @@
 }
 
 .card:hover {
-    background: #5c5b5b;
-    transform: translateY(-5px);
+    background: #ffae00;
+    transform: translateY(-2px);
 }
 
 h3 {
     margin: 0;
-    color: #333;
+    color: #000000;
+    font-size: 18px;
 }
