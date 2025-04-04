@@ -1,4 +1,4 @@
-/*Apply Leave Page */
+/* 🌟 Apply Leave Page */
 body {
     background: #f8f9fa;
     margin: 0;
@@ -6,7 +6,7 @@ body {
     overflow: auto;
 }
 
-/*Header */
+/* 🌟 Header */
 .form-header {
     text-align: center;
     font-size: 24px;
@@ -15,7 +15,7 @@ body {
     margin-top: 80px; /* Ensures spacing below navbar */
 }
 
-/*Form */
+/* 🌟 Form */
 .leave-form {
     background: white;
     border-radius: 10px;
@@ -26,7 +26,7 @@ body {
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Form Groups */
+/* 🌟 Form Groups */
 .form-group {
     display: flex;
     flex-direction: column;
@@ -47,13 +47,13 @@ input, select, textarea {
     font-size: 16px;
 }
 
-/*Textarea */
+/* 🌟 Textarea */
 textarea {
     resize: vertical;
     min-height: 80px;
 }
 
-/* File Upload */
+/* 🌟 File Upload */
 input[type="file"] {
     border: none;
     background: #f1f1f1;
@@ -61,7 +61,7 @@ input[type="file"] {
     border-radius: 5px;
 }
 
-/* Buttons */
+/* 🌟 Buttons */
 .form-buttons {
     display: flex;
     justify-content: center;
@@ -96,7 +96,7 @@ input[type="file"] {
     background: #b02a37;
 }
 
-/* Error Message */
+/* 🌟 Error Message */
 .error-message {
     color: red;
     font-size: 14px;
