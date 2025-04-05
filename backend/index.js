@@ -135,30 +135,26 @@ app.post("/register-dean", async (req, res) => {
   const password = generatePassword();
 
   try {
-    bcrypt.hash(password, saltRounds, async (err, hash) => {
-      if (err) {
-        console.error("Error hashing password:", err);
-      } else {
+    const hash = await bcrypt.hash(password, saltRounds);
+    const role_credential_id = await generateNextId('role_credentials_id', 'RCID', 'rolecredentials');
 
-        const role_credential_id = await generateNextId('role_credential_id', 'RCID', 'roleCredentials');
 
-        await db.query(
-          `INSERT INTO "roleCredentials" (role_credentials_id, role_type, managed_entity_id, email, password, created_at) 
-          VALUES ($1, $2, $3, $4, $5, $6)`,
-          [role_credential_id, "dean", managed_entity_id, email, hash, created_at]
-        );
+    await db.query(
+      `INSERT INTO "rolecredentials" (role_credentials_id, role_type, managed_entity_id, email, password, created_at) 
+       VALUES ($1, $2, $3, $4, $5, $6)`,
+      [role_credential_id, "dean", managed_entity_id, email, hash, created_at]
+    );
 
-        // Send email with the generated password
-        //await sendEmail(email, password);
+    // Send email with the generated password
+    // await sendEmail(email, password);
 
-        res.json({ message: "Dean registered", email, password });
-      }
-    });
+    res.json({ message: "Dean registered", email, password });
   } catch (err) {
-    console.error(err);
+    console.error("Registration error:", err);
     res.status(500).json({ error: "Registration failed" });
   }
 });
+
 
 // Register Program Director (by admin)
 app.post("/register-program-director", async (req, res) => {
@@ -167,30 +163,26 @@ app.post("/register-program-director", async (req, res) => {
   const password = generatePassword();
 
   try {
-    bcrypt.hash(password, saltRounds, async (err, hash) => {
-      if (err) {
-        console.error("Error hashing password:", err);
-      } else {
+    const hash = await bcrypt.hash(password, saltRounds);
 
-        const role_credential_id = await generateNextId('role_credential_id', 'RCID', 'roleCredentials');
+    const role_credential_id = await generateNextId('role_credentials_id', 'RCID', 'rolecredentials');
 
-        await db.query(
-          `INSERT INTO "roleCredentials" (role_credentials_id, role_type, managed_entity_id, email, password, created_at) 
-          VALUES ($1, $2, $3, $4, $5, $6)`,
-          [role_credential_id, "program director", managed_entity_id, email, hash, created_at]
-        );
+    await db.query(
+      `INSERT INTO "rolecredentials" (role_credentials_id, role_type, managed_entity_id, email, password, created_at) 
+       VALUES ($1, $2, $3, $4, $5, $6)`,
+      [role_credential_id, "program director", managed_entity_id, email, hash, created_at]
+    );
 
-        // Send email with the generated password
-        //await sendEmail(email, password);
+    // Send email with the generated password
+    // await sendEmail(email, password);
 
-        res.json({ message: "Program Director registered", email, password });
-      }
-    });
+    res.json({ message: "Program Director registered", email, password });
   } catch (err) {
-    console.error(err);
+    console.error("Registration error:", err);
     res.status(500).json({ error: "Registration failed" });
   }
 });
+
 
 // First-time employee registration
 app.post("/register", async (req, res) => {
