@@ -41,7 +41,7 @@ const generateNextId = async (column, prefix, table) => {
   try {
       // Query to get the latest ID from the specified column of the specified table
       const result = await db.query(`SELECT ${column} FROM ${table} ORDER BY ${column} DESC LIMIT 1`);
-
+    
       if (result.rows.length === 0) {
           // If no records exist, return the first ID with the specified prefix and padding
           return `${prefix}0001`;
@@ -248,8 +248,8 @@ passport.use(
       switch (type) {
         case "Dean":
         case "Program Director":
-          query = `SELECT * FROM roleCredentials WHERE email = $1 AND role_type = $2`;
-          params = [email, type];
+          query = `SELECT * FROM rolecredentials WHERE email = $1 AND role_type = $2`;
+          params = [email, type.toLowerCase()];
           break;
         case "Office Admin":
           query = `SELECT * FROM admins WHERE email = $1`;
@@ -284,7 +284,7 @@ passport.serializeUser((user, cb) => {
 passport.deserializeUser(async (email, cb) => {
   try {
     const result = await db.query(
-      "SELECT email, password, 'employee' AS role_type FROM credentials WHERE email = $1 UNION SELECT email, password, 'office admin' AS role_type FROM admins WHERE email = $1 UNION SELECT email, password, role_type FROM roleCredentials WHERE email = $1",
+      "SELECT email, password, 'employee' AS role_type FROM credentials WHERE email = $1 UNION SELECT email, password, 'office admin' AS role_type FROM admins WHERE email = $1 UNION SELECT email, password, role_type FROM rolecredentials WHERE email = $1",
       [email]
     );
     if (result.rows.length > 0) {

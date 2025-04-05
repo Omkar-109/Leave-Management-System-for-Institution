@@ -38,10 +38,11 @@ const Login = () => {
         }
 
         try {
+        
             const response = await fetch("http://localhost:3000/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password, role }),
+                body: JSON.stringify({ type:role, email, password }),
                 credentials: "include",
             });
 
@@ -56,9 +57,11 @@ const Login = () => {
                 navigate("/dean-dashboard", { state: { user: data.user } });
             } else if (role === "Program Director") {
                 navigate("/pd-dashboard", { state: { user: data.user } });
-            } else if (role === "Faculty" || role === "Office Admin") {
+            } else if (role === "Employee"  ) {
                 navigate("/employee-dashboard", { state: { user: data.user } });
-            } else {
+            } else if (role === "Office Admin"){
+                navigate("/admin-dashboard", { state: { user: data.user } });
+            }else {
                 navigate("/home", { state: { user: data.user } });
             }
 
@@ -83,7 +86,7 @@ const Login = () => {
                         <option value="">Select Role</option>
                         <option value="Dean">Dean</option>
                         <option value="Program Director">Program Director</option>
-                        <option value="Faculty">Employee</option>
+                        <option value="Employee">Employee</option>
                         <option value="Office Admin">Office Admin</option>
                     </select>
 
@@ -119,7 +122,7 @@ const Login = () => {
 
                     <button type="submit" disabled={!email || !password || !role || !userCaptcha}>LOGIN</button>
                 </form>
-                <p className="forgot"><a href="#">Forgot password?</a></p>
+                {/* <p className="forgot"><a href="#">Forgot password?</a></p> */}
             </div>
         </div>
     );
