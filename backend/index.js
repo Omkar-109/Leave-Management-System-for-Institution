@@ -475,7 +475,7 @@ app.get('/employees', async (req, res) => {
 // to get an employee details
 app.get('/employee/:employee_id', async (req, res) => {
   const { employee_id } = req.params;
-
+console.log(req.params);
   try {
       // Fetch employee details including date of joining
       const employeeQuery = `
@@ -750,10 +750,10 @@ app.put('/leave/update-status', async (req, res) => {
 
       if (role === 'dean') {
           columnToUpdate = 'dean_status';
-      } else if (role === 'pd') {
+      } else if (role === 'program director') {
           columnToUpdate = 'program_director_status';
       } else {
-          return res.status(400).json({ message: 'Invalid role. Use "dean" or "pd".' });
+          return res.status(400).json({ message: 'Invalid role. Use "dean" or "program director".' });
       }
 
       const query = `
