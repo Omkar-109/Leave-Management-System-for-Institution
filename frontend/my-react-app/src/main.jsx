@@ -7,6 +7,17 @@ import Home from "./Home.jsx";
 import EmployeeDashboard from "./EmployeeDashboard.jsx";
 import ApplyLeave from "./ApplyLeave.jsx"; // Import Employee Dashboard
 
+//import admin pages
+import AdminDashboard from "./adminPages/AdminDashboard.jsx";
+import RegisterPDDean from "./adminPages/RegisterPDDean.jsx";
+import RegisterEmployee from "./adminPages/RegisterEmployee.jsx";
+import ViewEmployees from "./adminPages/ViewEmployees.jsx";
+import AddProgram from "./adminPages/AddProgram.jsx";
+import ViewPrograms from "./adminPages/ViewPrograms.jsx";
+import AddLeaveType from './adminPages/AddLeaveType';
+import ViewLeaveTypes from './adminPages/ViewLeaveTypes';
+import ViewLeaveRecords from './adminPages/ViewLeaveRecords';
+
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Router>
@@ -15,6 +26,19 @@ createRoot(document.getElementById("root")).render(
         <Route path="/home" element={<Home />} />
         <Route path="/employee-dashboard" element={<EmployeeDashboard />} /> 
         <Route path="/apply-leave" element={<ApplyLeave />} /> 
+
+        {/* admin */}
+        <Route path="/admin-dashboard" element={<AdminDashboard />}/>
+        <Route path="/admin/register-pd-dean" element={<RegisterPDDean />}/>
+        <Route path="/admin/register-employee" element={<RegisterEmployee />}/>
+        <Route path="/admin/view-employees" element={<ViewEmployees />} />
+        <Route path="/admin/add-program" element={<AddProgram />} />
+        <Route path="/admin/view-programs" element={<ViewPrograms />} />
+        <Route path="/admin/add-leave-type" element={<AddLeaveType />} />
+        <Route path="/admin/view-leave-types" element={<ViewLeaveTypes />} />
+        <Route path="/admin/view-leave-records" element={<ViewLeaveRecords />} />
+        
+
       </Routes>
     </Router>
   </React.StrictMode>
