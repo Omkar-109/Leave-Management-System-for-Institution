@@ -356,6 +356,36 @@ app.get('/programs', async (req, res) => {
   }
 });
 
+// DELETE /programs/:id
+app.delete("/programs/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await db.query(`DELETE FROM programs WHERE program_id = $1`, [id]);
+    res.json({ message: "Program deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting program:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// PUT /programs/:id
+app.put("/programs/:id", async (req, res) => {
+  const { id } = req.params;
+  const { program_name } = req.body;
+
+  try {
+    const updated = await db.query(
+      `UPDATE programs SET program_name = $1 WHERE program_id = $2 RETURNING *`,
+      [program_name, id]
+    );
+    res.json({ message: "Program updated", program: updated.rows[0] });
+  } catch (error) {
+    console.error("Error updating program:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 //post leavetypes
 app.post('/leave-types', async (req, res) => {
   const { faculty_type, leave_type, number_of_leaves, reset_frequency, reset_date } = req.body;
@@ -792,6 +822,44 @@ app.get('/leave/pending', async (req, res) => {
   }
 });
 
+//manual register of admins
+app.post("/register-admin", async (req, res) => {
+  const { name, email, password } = req.body;
+  const created_at = new Date()
+
+  if (!name || !email || !password) {
+    return res.status(400).json({ error: "Name, email, and password are required" });
+  }
+
+  try {
+    // 1. Hash the password
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    // 2. Generate new admin ID
+    const admin_id = await generateNextId("admin_id", "ADM", "admins");
+
+    // 3. Insert into database
+    await db.query(
+      `INSERT INTO admins (admin_id, name, email, password, created_at)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [admin_id, name, email, hashedPassword, created_at]
+    );
+
+    res.json({ message: "Admin registered successfully", admin_id });
+  } catch (err) {
+    console.error("❌ Error registering admin:", err);
+    res.status(500).json({ error: "Admin registration failed" });
+  }
+});
+
+//test with
+/*
+{
+  "name": "admin1",
+  "email": "admin1@gmail.com",
+  "password": "admin1"
+}
+*/
 
 
 
