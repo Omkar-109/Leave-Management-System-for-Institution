@@ -1,0 +1,155 @@
+.list-container {
+    margin-top: 120px;
+    padding: 20px;
+    max-width: 95%;
+    margin-left: auto;
+    margin-right: auto;
+    font-family: Arial, sans-serif;
+  }
+  
+  .list-title {
+    text-align: center;
+    font-size: 28px;
+    color: #004085;
+    margin-bottom: 20px;
+    font-weight: bold;
+  }
+  
+  .loading,
+  .error {
+    text-align: center;
+    font-size: 18px;
+    margin-top: 20px;
+    color: #888;
+  }
+  
+  .error {
+    color: red;
+  }
+  
+  .list-wrapper {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow-x: auto;
+  }
+  
+  .list-header,
+  .list-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr 1fr 2fr 2fr;
+    padding: 12px;
+    border-bottom: 1px solid #e0e0e0;
+    align-items: center;
+    background-color: #fbf9f9;
+  }
+  
+  .list-header {
+    background-color: #f1f5f9;
+    font-weight: bold;
+    color: #333;
+  }
+  
+
+  .list-row div {
+    padding: 8px;
+    font-size: 14px;
+    color: #000000;
+  }
+  
+  ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+  
+  li {
+    list-style-type: disc;
+    font-size: 13px;
+  }
+  
+  .no-info {
+    color: #343030;
+    font-style: italic;
+  }
+  
+
+  /* Reuse previous styles, just extending for button and modal styles */
+
+.btn {
+    padding: 5px 10px;
+    margin-right: 8px;
+    border-radius: 5px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: 0.2s ease;
+  }
+  
+  .btn.edit {
+    background-color: #facc15;
+    color: black;
+  }
+  
+  .btn.edit:hover {
+    background-color: #eab308;
+  }
+  
+  .btn.delete {
+    background-color: #ef4444;
+    color: white;
+  }
+  
+  .btn.delete:hover {
+    background-color: #dc2626;
+  }
+  
+  .btn.cancel {
+    background-color: #d1d5db;
+    color: black;
+  }
+  
+  .btn.save {
+    background-color: #3b82f6;
+    color: white;
+  }
+  
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+  }
+  
+  .modal-box {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  }
+  
+  .modal-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 12px;
+  }
+  
+  .modal-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+  
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  

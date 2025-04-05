@@ -16,7 +16,7 @@ const saltRounds = 10;
 env.config();
 
 app.use(cors({
-  origin: 'http://localhost:5173', // Replace with your frontend's port
+  origin: 'http://localhost:5174', // Replace with your frontend's port
   credentials: true
 }));
 

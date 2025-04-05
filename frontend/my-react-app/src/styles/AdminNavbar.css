@@ -1,0 +1,32 @@
+
+  /* Navigation Buttons */
+  .adminNavLinks {
+    margin-top: 65px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    padding: 15px 20px;
+    background-color: #f9f9f9;
+  }
+  
+  .adminNavLinks a {
+    padding: 10px 20px;
+    border-radius: 30px;
+    background-color: #cdc1c1;
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: 0.3s;
+  }
+  
+  .adminNavLinks a:hover {
+    background-color: #d4d4d4;
+  }
+  
+  .adminNavLinks .active {
+    background-color: #007bff;
+    color: white;
+  }
+  
