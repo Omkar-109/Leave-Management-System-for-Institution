@@ -18,9 +18,7 @@ const EmployeeDashboard = ({ user }) => {
                     <Card title="View Leave Applications" onClick={() => navigate("/view-leaves")} />
 
                 </div>
-                <div className="horizontal-line">
-                    
-                </div>
+                
             </div>
         </div>
     );
