@@ -904,6 +904,34 @@ app.post("/register-admin", async (req, res) => {
 }
 */
 
+// to get the pdf file uploaded based on leave id
+app.get('/leave/:leave_id/document', async (req, res) => {
+  const { leave_id } = req.params;
+
+  try {
+    const result = await db.query(
+      `SELECT supporting_document, document_name FROM public.leave WHERE leave_id = $1`,
+      [leave_id]
+    );
+
+    if (result.rows.length === 0 || !result.rows[0].supporting_document) {
+      return res.status(404).json({ error: "Document not found." });
+    }
+
+    const { supporting_document, document_name } = result.rows[0];
+
+    res.set({
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `inline; filename="${document_name}"`,
+    });
+
+    res.send(supporting_document);
+  } catch (err) {
+    console.error("Error fetching document:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 
 
 app.listen(port, () => {
