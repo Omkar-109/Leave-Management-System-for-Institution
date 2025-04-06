@@ -9,6 +9,10 @@ import env from "dotenv";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 import cors from "cors";
+import multer from 'multer';
+
+const upload = multer(); // memory storage by default
+
 
 const app = express();
 const port = 3000;
@@ -625,48 +629,64 @@ app.post('/employee/add-phone', async (req, res) => {
 //{ "employee_id": "EMP0001", "phone": "9876543210" }
 
 
-//apply leave
-app.post('/apply-leave', async (req, res) => {
+// apply leave with optional file
+app.post('/apply-leave', upload.single('pdf'), async (req, res) => {
   const { employee_id, start_date, end_date, leave_type, reason } = req.body;
+  const file = req.file;
 
   // Validate required fields
   if (!employee_id || !start_date || !end_date || !leave_type || !reason) {
-      return res.status(400).json({ error: "All fields are required." });
+    return res.status(400).json({ error: "All fields are required." });
   }
 
   try {
-      // Check if the employee exists
-      const employeeCheckQuery = `SELECT employees_id FROM employees WHERE employees_id = $1`;
-      const employeeCheck = await db.query(employeeCheckQuery, [employee_id]);
+    // Check if the employee exists
+    const employeeCheckQuery = `SELECT employees_id FROM employees WHERE employees_id = $1`;
+    const employeeCheck = await db.query(employeeCheckQuery, [employee_id]);
 
-      if (employeeCheck.rows.length === 0) {
-          return res.status(404).json({ error: "Employee not found." });
-      }
+    if (employeeCheck.rows.length === 0) {
+      return res.status(404).json({ error: "Employee not found." });
+    }
 
-      // Generate new Leave ID using your function
-      const leaveID = await generateNextId('leave_id', 'LID', 'public.leave');
+    // Generate new Leave ID
+    const leaveID = await generateNextId('leave_id', 'LID', 'public.leave');
 
-      // Insert leave request
-      const insertLeaveQuery = `
-          INSERT INTO public.leave (
-              leave_id, employee_id, start_date, end_date, leave_type, 
-              status, reason, program_director_status, dean_status, created_at, updated_at
-          ) VALUES ($1, $2, $3, $4, $5, 'pending', $6, 'pending', 'pending', CURRENT_DATE, CURRENT_DATE)
-          RETURNING leave_id
-      `;
-      const leaveResult = await db.query(insertLeaveQuery, [leaveID, employee_id, start_date, end_date, leave_type, reason]);
+    // Insert leave request with optional file
+    const insertLeaveQuery = `
+      INSERT INTO public.leave (
+        leave_id, employee_id, start_date, end_date, leave_type, 
+        status, reason, program_director_status, dean_status, 
+        supporting_document, document_name, created_at, updated_at
+      ) VALUES ($1, $2, $3, $4, $5, 'pending', $6, 'pending', 'pending', $7, $8, CURRENT_DATE, CURRENT_DATE)
+      RETURNING leave_id
+    `;
 
-      res.status(201).json({
-          message: "Leave request submitted successfully.",
-          leave_id: leaveResult.rows[0].leave_id,
-          status: "Pending"
-      });
+    const supporting_document = file ? file.buffer : null;
+    const document_name = file ? file.originalname : null;
+
+    const leaveResult = await db.query(insertLeaveQuery, [
+      leaveID,
+      employee_id,
+      start_date,
+      end_date,
+      leave_type,
+      reason,
+      supporting_document,
+      document_name
+    ]);
+
+    res.status(201).json({
+      message: "Leave request submitted successfully.",
+      leave_id: leaveResult.rows[0].leave_id,
+      status: "Pending"
+    });
 
   } catch (error) {
-      console.error("Error applying for leave:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error applying for leave:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 // test
 // {
 //     "employee_id": "EMP0001",
