@@ -358,3 +358,42 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.schools
     OWNER to postgres;   
+
+
+-- work in for emp and program
+CREATE TABLE employee_program (
+    employees_id VARCHAR(10) NOT NULL,
+    program_id VARCHAR(10) NOT NULL,
+    created_at DATE DEFAULT CURRENT_DATE,
+    
+    PRIMARY KEY (employees_id, program_id),
+
+    CONSTRAINT fk_employee
+        FOREIGN KEY (employees_id)
+        REFERENCES employees(employees_id)
+        ON DELETE CASCADE,
+    
+    CONSTRAINT fk_program
+        FOREIGN KEY (program_id)
+        REFERENCES programs(program_id)
+        ON DELETE CASCADE
+);
+
+--program_school relation
+CREATE TABLE program_school (
+    program_id VARCHAR(10) NOT NULL,
+    school_id VARCHAR(10) NOT NULL,
+    created_at DATE DEFAULT CURRENT_DATE,
+
+    PRIMARY KEY (program_id, school_id),
+
+    CONSTRAINT fk_program
+        FOREIGN KEY (program_id)
+        REFERENCES programs(program_id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT fk_school
+        FOREIGN KEY (school_id)
+        REFERENCES schools(school_id)
+        ON DELETE CASCADE
+);
