@@ -5,13 +5,16 @@ import "./styles/index.css";
 import Login from "./Login.jsx";
 
 // Import Employee Dashboard
-import EmployeeDashboard from "./EmployeeDashboard.jsx";
-import ApplyLeave from "./ApplyLeave.jsx"; 
-import ViewLeaves from "./ViewLeaves.jsx";
+import EmployeeDashboard from "./empPages/EmployeeDashboard.jsx";
+import ApplyLeave from "./empPages/ApplyLeave.jsx"; 
+import ViewLeaves from "./empPages/ViewLeaves.jsx";
+
+//import pd pages
+import PDDashboard from "./pdPages/pd-dashboard.jsx";
 
 //import admin pages
 import AdminDashboard from "./adminPages/AdminDashboard.jsx";
-import RegisterPDDean from "./adminPages/RegisterPDDean.jsx";
+import RegisterPDDean from "./adminPages/RegisterPDDean.jsx"; 
 import RegisterEmployee from "./adminPages/RegisterEmployee.jsx";
 import ViewEmployees from "./adminPages/ViewEmployees.jsx";
 import AddProgram from "./adminPages/AddProgram.jsx";
@@ -30,6 +33,9 @@ createRoot(document.getElementById("root")).render(
         <Route path="/employee-dashboard" element={<EmployeeDashboard />} /> 
         <Route path="/apply-leave" element={<ApplyLeave />} /> 
         <Route path="/view-leaves" element={<ViewLeaves />} />
+
+         {/* PD */}
+         <Route path="/pd-dashboard" element={<PDDashboard />} />
 
         {/* admin */}
         <Route path="/admin-dashboard" element={<AdminDashboard />}/>
