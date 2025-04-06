@@ -12,6 +12,9 @@ import ViewLeaves from "./empPages/ViewLeaves.jsx";
 //import pd pages
 import PDDashboard from "./pdPages/pd-dashboard.jsx";
 
+//import Dean pages
+import DeanDashboard from "./deanPages/dean-dashboard.jsx";
+
 //import admin pages
 import AdminDashboard from "./adminPages/AdminDashboard.jsx";
 import RegisterPDDean from "./adminPages/RegisterPDDean.jsx"; 
@@ -37,6 +40,8 @@ createRoot(document.getElementById("root")).render(
          {/* PD */}
          <Route path="/pd-dashboard" element={<PDDashboard />} />
 
+         {/* Dean */}
+         <Route path="/dean-dashboard" element={<DeanDashboard />} />
         {/* admin */}
         <Route path="/admin-dashboard" element={<AdminDashboard />}/>
         <Route path="/admin/register-pd-dean" element={<RegisterPDDean />}/>
