@@ -19,6 +19,7 @@ const ApplyLeave = () => {
             try {
                 const res = await fetch("http://localhost:3000/leave-types");
                 const data = await res.json();
+                console.log("Fetched leave types:", data); // Debug
                 setLeaveTypes(data);
             } catch (err) {
                 console.error("Failed to fetch leave types", err);
@@ -26,7 +27,7 @@ const ApplyLeave = () => {
             }
         };
 
-        // Auto-fill employee ID from logged-in user (optional)
+        // Auto-fill employee ID from logged-in user
         const user = JSON.parse(localStorage.getItem("user"));
         if (user?.employee_id) {
             setEmployeeId(user.employee_id);
@@ -80,9 +81,8 @@ const ApplyLeave = () => {
                         <input
                             type="text"
                             value={employeeId}
-                            onChange={(e) => setEmployeeId(e.target.value)}
+                            disabled
                             required
-                            disabled // optional if auto-filled
                         />
                     </div>
 
