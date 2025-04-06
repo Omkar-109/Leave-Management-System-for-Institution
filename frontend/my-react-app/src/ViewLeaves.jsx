@@ -1,54 +1,82 @@
 import React, { useEffect, useState } from "react";
-import "../styles/Employee.css";
+import axios from "axios";
+import Navbar from "./components/navbar"; // Reuse your existing Navbar
+import "./styles/ViewLeaves.css"; // Create a CSS file to style the view
 
-const ViewLeaves = () => {
-    const [leaves, setLeaves] = useState([]);
+const ViewLeaveApplications = ({ user }) => {
+    const [leaveData, setLeaveData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
     useEffect(() => {
-        const fetchLeaves = async () => {
-            const response = await fetch("http://localhost:3000/my-leaves", { credentials: "include" });
-            const data = await response.json();
-            setLeaves(data);
+        if (!user?.employee_id) {
+            setError("Employee ID not found.");
+            setLoading(false);
+            return;
+        }
+
+        const fetchLeaveData = async () => {
+            try {
+                const response = await axios.get(`http://localhost:3000/employee/${user.employee_id}/leave`);
+                setLeaveData(response.data);
+            } catch (err) {
+                setError("Failed to fetch leave applications.");
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
         };
 
-        fetchLeaves();
-    }, []);
+        fetchLeaveData();
+    }, [user]);
 
     return (
-        <div className="container">
-            <div className="table-container">
-                <h2>My Leave Applications</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Leave ID</th>
-                            <th>Type</th>
-                            <th>No. of Days</th>
-                            <th>From</th>
-                            <th>To</th>
-                            <th>Status (PD)</th>
-                            <th>Status (Dean)</th>
-                            <th>Comment</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {leaves.map((leave) => (
-                            <tr key={leave.leave_id}>
-                                <td>{leave.leave_id}</td>
-                                <td>{leave.leaveType}</td>
-                                <td>{leave.noOfDays}</td>
-                                <td>{leave.fromDate}</td>
-                                <td>{leave.toDate}</td>
-                                <td>{leave.pdStatus}</td>
-                                <td>{leave.deanStatus}</td>
-                                <td>{leave.comment}</td>
+        <div className="view-leaves-page">
+            <Navbar user={user} />
+
+            <div className="content">
+                <h2>Your Leave Applications</h2>
+                
+                {loading && <p>Loading...</p>}
+                {error && <p className="error">{error}</p>}
+
+                {!loading && !error && leaveData.length === 0 && (
+                    <p>No leave applications found.</p>
+                )}
+
+                {!loading && !error && leaveData.length > 0 && (
+                    <table className="leave-table">
+                        <thead>
+                            <tr>
+                                <th>Leave ID</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>PD Status</th>
+                                <th>Dean Status</th>
+                                <th>Reason</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {leaveData.map((leave) => (
+                                <tr key={leave.leave_id}>
+                                    <td>{leave.leave_id}</td>
+                                    <td>{leave.start_date}</td>
+                                    <td>{leave.end_date}</td>
+                                    <td>{leave.leave_type}</td>
+                                    <td>{leave.status}</td>
+                                    <td>{leave.program_director_status}</td>
+                                    <td>{leave.dean_status}</td>
+                                    <td>{leave.reason}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                )}
             </div>
         </div>
     );
 };
 
-export default ViewLeaves;
+export default ViewLeaveApplications;

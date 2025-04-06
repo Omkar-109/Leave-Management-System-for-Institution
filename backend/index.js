@@ -16,7 +16,7 @@ const saltRounds = 10;
 env.config();
 
 app.use(cors({
-  origin: 'http://localhost:5174', // Replace with your frontend's port
+  origin: 'http://localhost:5173', // Replace with your frontend's port
   credentials: true
 }));
 
@@ -708,7 +708,7 @@ app.get('/leave/:leave_id', async (req, res) => {
   }
 });
 
-//to get all leaves record of a perucular employee
+//to get all leaves record of a perticular employee
 app.get('/employee/:employee_id/leave', async (req, res) => {
   try {
       const { employee_id } = req.params;

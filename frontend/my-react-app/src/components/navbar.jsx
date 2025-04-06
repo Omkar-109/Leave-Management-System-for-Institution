@@ -1,14 +1,46 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../styles/navbar.css"; // Navbar styling
+import axios from "axios";
+import "../styles/navbar.css";
 
-const Navbar = ({ user }) => {
+const Navbar = () => {
     const navigate = useNavigate();
+    const [employeeName, setEmployeeName] = useState("User");
     const [isDropdownOpen, setDropdownOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [errorMsg, setErrorMsg] = useState("");
+
+    useEffect(() => {
+        const fetchEmployeeName = async () => {
+            try {
+                const user = JSON.parse(localStorage.getItem("user"));
+                if (!user?.employee_id) {
+                    setErrorMsg("Employee ID not found.");
+                    return;
+                }
+
+                const response = await axios.get(`http://localhost:3000/employee/${user.employee_id}`);
+                const emp = response?.data?.employee;
+
+                if (emp?.name) {
+                    setEmployeeName(emp.name);
+                } else {
+                    setErrorMsg("Name not found.");
+                }
+            } catch (error) {
+                console.error("Error fetching employee name:", error);
+                setErrorMsg("Failed to fetch employee name.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchEmployeeName();
+    }, []);
 
     const handleLogout = () => {
-        localStorage.removeItem("user"); // Clear session
-        navigate("/", { replace: true }); // Redirect to login
+        localStorage.removeItem("user");
+        navigate("/", { replace: true });
     };
 
     return (
@@ -17,10 +49,10 @@ const Navbar = ({ user }) => {
 
             <div className="navbar-user">
                 <button 
-                    className="user-btn" 
+                    className="user-btn"
                     onClick={() => setDropdownOpen(!isDropdownOpen)}
                 >
-                    {user?.name || "User"} ▼
+                    {loading ? "Loading..." : errorMsg ? "User" : employeeName} ▼
                 </button>
 
                 {isDropdownOpen && (
