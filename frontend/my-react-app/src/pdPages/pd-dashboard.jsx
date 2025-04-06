@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../components/navbar.jsx";
 import axios from "axios";
-import "./styles/PDDashboard.css";
+import "../styles/PDDashboard.css";
 
 const PDDashboard = ({ user }) => {
     const [leaves, setLeaves] = useState([]);
     const [showTable, setShowTable] = useState(false);
     const [error, setError] = useState("");
+    const [showModal, setShowModal] = useState(false);
+    const [selectedLeaveId, setSelectedLeaveId] = useState(null);
+    const [rejectionReason, setRejectionReason] = useState("");
 
     const fetchLeaves = async () => {
         try {
-            const response = await axios.get("http://localhost:3000/pd/leave-applications");
-            setLeaves(response.data);
+            const response = await axios.get("http://localhost:3000/leaves");
+            setLeaves(response.data.leaves);
             setError("");
         } catch (err) {
             console.error(err);
@@ -19,26 +22,39 @@ const PDDashboard = ({ user }) => {
         }
     };
 
-    const handleDecision = async (leaveId, decision) => {
-        let rejectionReason = "";
-
-        if (decision === "rejected") {
-            rejectionReason = prompt("Enter reason for rejection:");
-            if (!rejectionReason) return alert("Rejection reason is required.");
+    const handleApprove = async (leaveId) => {
+        try {
+            await axios.put("http://localhost:3000/leave/update-status", {
+                leave_id: leaveId,
+                role: "program director",
+                status: "approved",
+            });
+            fetchLeaves(); // Refresh after approval
+        } catch (err) {
+            console.error("Approval failed:", err.message);
         }
+    };
+
+    const openRejectionModal = (leaveId) => {
+        setSelectedLeaveId(leaveId);
+        setRejectionReason("");
+        setShowModal(true);
+    };
+
+    const handleRejectSubmit = async () => {
+        if (!rejectionReason.trim()) return;
 
         try {
-            const res = await axios.post("http://localhost:3000/pd/leave-decision", {
-                leave_id: leaveId,
-                decision,
+            await axios.put("http://localhost:3000/leave/update-status", {
+                leave_id: selectedLeaveId,
+                role: "program director",
+                status: "rejected",
                 reason: rejectionReason,
             });
-
-            alert(res.data.message);
-            fetchLeaves(); // Refresh list
+            setShowModal(false);
+            fetchLeaves(); // Refresh after rejection
         } catch (err) {
-            console.error(err);
-            alert("Action failed.");
+            console.error("Rejection failed:", err.message);
         }
     };
 
@@ -63,6 +79,7 @@ const PDDashboard = ({ user }) => {
                             <tr>
                                 <th>Leave ID</th>
                                 <th>Employee ID</th>
+                                <th>Name</th>
                                 <th>Type</th>
                                 <th>Start</th>
                                 <th>End</th>
@@ -76,6 +93,7 @@ const PDDashboard = ({ user }) => {
                                 <tr key={leave.leave_id}>
                                     <td>{leave.leave_id}</td>
                                     <td>{leave.employee_id}</td>
+                                    <td>{leave.name}</td>
                                     <td>{leave.leave_type}</td>
                                     <td>{leave.start_date}</td>
                                     <td>{leave.end_date}</td>
@@ -84,14 +102,14 @@ const PDDashboard = ({ user }) => {
                                     <td>
                                         <button
                                             className="approve-btn"
-                                            onClick={() => handleDecision(leave.leave_id, "approved")}
+                                            onClick={() => handleApprove(leave.leave_id)}
                                             disabled={leave.program_director_status !== "pending"}
                                         >
                                             Approve
                                         </button>
                                         <button
                                             className="reject-btn"
-                                            onClick={() => handleDecision(leave.leave_id, "rejected")}
+                                            onClick={() => openRejectionModal(leave.leave_id)}
                                             disabled={leave.program_director_status !== "pending"}
                                         >
                                             Reject
@@ -104,6 +122,24 @@ const PDDashboard = ({ user }) => {
                 )}
 
                 {showTable && leaves.length === 0 && <p>No leave applications found.</p>}
+
+                {/* Rejection Modal */}
+                {showModal && (
+                    <div className="modal-overlay">
+                        <div className="modal">
+                            <h3>Enter Rejection Reason</h3>
+                            <textarea
+                                value={rejectionReason}
+                                onChange={(e) => setRejectionReason(e.target.value)}
+                                placeholder="Type your reason here..."
+                            ></textarea>
+                            <div className="modal-buttons">
+                                <button className="cancel-btn" onClick={() => setShowModal(false)}>Cancel</button>
+                                <button className="submit-btn" onClick={handleRejectSubmit}>Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
