@@ -28,7 +28,7 @@ const AdminDashboard = () => {
   const cardData = [
     { label: "Total Employees", count: stats.employees },
     { label: "Total Deans", count: stats.deans },
-    { label: "Total PD", count: stats.pd },
+    { label: "Total Progarm Directors", count: stats.pd },
     { label: "Total Programs", count: stats.programs },
     { label: "Total Leave Applications", count: stats.leaves },
   ];

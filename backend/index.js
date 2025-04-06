@@ -846,8 +846,8 @@ app.get('/admin/stats', async (req, res) => {
   try {
     const [employees, deans, pd, programs, leaves] = await Promise.all([
       db.query("SELECT COUNT(*) FROM employees"),
-      db.query("SELECT COUNT(*) FROM roles WHERE role_type IN ('Dean')"),
-      db.query("SELECT COUNT(*) FROM roles WHERE role_type IN ('PD')"),
+      db.query("SELECT COUNT(*) FROM rolecredentials WHERE role_type IN ('dean')"),
+      db.query("SELECT COUNT(*) FROM rolecredentials WHERE role_type IN ('program director')"),
       db.query("SELECT COUNT(*) FROM programs"),
       db.query("SELECT COUNT(*) FROM leave"),
     ]);
