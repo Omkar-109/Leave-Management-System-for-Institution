@@ -822,6 +822,29 @@ app.get('/leave/pending', async (req, res) => {
   }
 });
 
+app.get('/admin/stats', async (req, res) => {
+  try {
+    const [employees, deans, pd, programs, leaves] = await Promise.all([
+      db.query("SELECT COUNT(*) FROM employees"),
+      db.query("SELECT COUNT(*) FROM roles WHERE role_type IN ('Dean')"),
+      db.query("SELECT COUNT(*) FROM roles WHERE role_type IN ('PD')"),
+      db.query("SELECT COUNT(*) FROM programs"),
+      db.query("SELECT COUNT(*) FROM leave"),
+    ]);
+
+    res.json({
+      employees: employees.rows[0].count,
+      deans: deans.rows[0].count,
+      pd: pd.rows[0].count,
+      programs: programs.rows[0].count,
+      leaves: leaves.rows[0].count,
+    });
+  } catch (err) {
+    console.error("Error fetching dashboard stats:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 //manual register of admins
 app.post("/register-admin", async (req, res) => {
   const { name, email, password } = req.body;
