@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "./components/navbar"; // Reuse your existing Navbar
-import "./styles/ViewLeaves.css"; // Create a CSS file to style the view
+import "./styles/ViewLeaves.css"; // Make sure this file exists
 
-const ViewLeaveApplications = ({ user }) => {
+const ViewLeaveApplications = () => {
+    const [user, setUser] = useState(null);
     const [leaveData, setLeaveData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
     useEffect(() => {
-        if (!user?.employee_id) {
+        const storedUser = JSON.parse(localStorage.getItem("user"));
+        setUser(storedUser);
+
+        if (!storedUser?.employee_id) {
             setError("Employee ID not found.");
             setLoading(false);
             return;
@@ -17,7 +21,9 @@ const ViewLeaveApplications = ({ user }) => {
 
         const fetchLeaveData = async () => {
             try {
-                const response = await axios.get(`http://localhost:3000/employee/${user.employee_id}/leave`);
+                const response = await axios.get(
+                    `http://localhost:3000/employee/${storedUser.employee_id}/leave`
+                );
                 setLeaveData(response.data);
             } catch (err) {
                 setError("Failed to fetch leave applications.");
@@ -28,15 +34,15 @@ const ViewLeaveApplications = ({ user }) => {
         };
 
         fetchLeaveData();
-    }, [user]);
+    }, []);
 
     return (
         <div className="view-leaves-page">
-            <Navbar user={user} />
+            <Navbar />
 
             <div className="content">
                 <h2>Your Leave Applications</h2>
-                
+
                 {loading && <p>Loading...</p>}
                 {error && <p className="error">{error}</p>}
 
@@ -62,9 +68,9 @@ const ViewLeaveApplications = ({ user }) => {
                             {leaveData.map((leave) => (
                                 <tr key={leave.leave_id}>
                                     <td>{leave.leave_id}</td>
-                                    <td>{leave.start_date}</td>
-                                    <td>{leave.end_date}</td>
-                                    <td>{leave.leave_type}</td>
+                                    <td>{new Date(leave.start_date).toLocaleDateString()}</td>
+                                    <td>{new Date(leave.end_date).toLocaleDateString()}</td>
+                                    <td>{leave.leave_type || "N/A"}</td>
                                     <td>{leave.status}</td>
                                     <td>{leave.program_director_status}</td>
                                     <td>{leave.dean_status}</td>
