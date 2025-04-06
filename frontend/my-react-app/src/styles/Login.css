@@ -7,13 +7,12 @@
 
 body {
     font-family: Arial, sans-serif;
-    background: url('../images/university-bg2.jpg') no-repeat center center fixed;
-    background-size: cover;
 }
 
 /* Container centers everything */
 .container {
-    
+    background: url('../images/university-bg2.jpg') no-repeat center center fixed;
+    background-size: cover;
     display: flex;
     flex-direction: column;
     align-items: center;
