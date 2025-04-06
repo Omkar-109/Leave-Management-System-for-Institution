@@ -10,6 +10,7 @@ const ApplyLeave = () => {
     const [fromDate, setFromDate] = useState("");
     const [toDate, setToDate] = useState("");
     const [reason, setReason] = useState("");
+    const [pdf, setPdf] = useState(null);
     const [error, setError] = useState("");
 
     const navigate = useNavigate();
@@ -19,7 +20,7 @@ const ApplyLeave = () => {
             try {
                 const res = await fetch("http://localhost:3000/leave-types");
                 const data = await res.json();
-                console.log("Fetched leave types:", data); // Debug
+                console.log("Fetched leave types:", data);
                 setLeaveTypes(data);
             } catch (err) {
                 console.error("Failed to fetch leave types", err);
@@ -27,7 +28,6 @@ const ApplyLeave = () => {
             }
         };
 
-        // Auto-fill employee ID from logged-in user
         const user = JSON.parse(localStorage.getItem("user"));
         if (user?.employee_id) {
             setEmployeeId(user.employee_id);
@@ -40,21 +40,20 @@ const ApplyLeave = () => {
         e.preventDefault();
         setError("");
 
-        const payload = {
-            employee_id: employeeId,
-            start_date: fromDate,
-            end_date: toDate,
-            leave_type: leaveType,
-            reason: reason
-        };
+        const formData = new FormData();
+        formData.append("employee_id", employeeId);
+        formData.append("start_date", fromDate);
+        formData.append("end_date", toDate);
+        formData.append("leave_type", leaveType);
+        formData.append("reason", reason);
+        if (pdf) {
+            formData.append("pdf", pdf);
+        }
 
         try {
             const response = await fetch("http://localhost:3000/apply-leave", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(payload),
+                body: formData,
                 credentials: "include"
             });
 
@@ -74,7 +73,7 @@ const ApplyLeave = () => {
             <h2 className="form-header">Apply for Leave</h2>
             {error && <p className="error-message">{error}</p>}
 
-            <form className="leave-form" onSubmit={handleSubmit}>
+            <form className="leave-form" onSubmit={handleSubmit} encType="multipart/form-data">
                 <div className="form-grid">
                     <div className="form-group">
                         <label>Employee ID:</label>
@@ -129,6 +128,15 @@ const ApplyLeave = () => {
                             onChange={(e) => setReason(e.target.value)}
                             required
                         ></textarea>
+                    </div>
+
+                    <div className="form-group full-width">
+                        <label>Supporting Document (Optional PDF):</label>
+                        <input
+                            type="file"
+                            accept="application/pdf"
+                            onChange={(e) => setPdf(e.target.files[0])}
+                        />
                     </div>
                 </div>
 
