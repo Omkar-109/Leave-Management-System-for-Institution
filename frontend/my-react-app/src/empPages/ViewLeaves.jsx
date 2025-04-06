@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Navbar from "./components/navbar"; // Reuse your existing Navbar
+import Navbar from "../components/navbar"; // Reuse your existing Navbar
 import "./styles/ViewLeaves.css"; // Make sure this file exists
 
 const ViewLeaveApplications = () => {

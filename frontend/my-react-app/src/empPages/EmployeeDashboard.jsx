@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "./components/navbar.jsx"; // Import Navbar
-import Card from "./components/card.jsx"; // Import reusable Card component
+import Navbar from "../components/navbar.jsx"; // Import Navbar
+import Card from "../components/card.jsx"; // Import reusable Card component
 import "./styles/Employee.css";
 
 const EmployeeDashboard = ({ user }) => {
