@@ -708,7 +708,7 @@ app.get('/leave/:leave_id', async (req, res) => {
   }
 });
 
-//to get all leaves record of a perucular employee
+//to get all leaves record of a perticular employee
 app.get('/employee/:employee_id/leave', async (req, res) => {
   try {
       const { employee_id } = req.params;

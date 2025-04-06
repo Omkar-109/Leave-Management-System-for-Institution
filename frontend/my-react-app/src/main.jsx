@@ -3,9 +3,11 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./styles/index.css";
 import Login from "./Login.jsx";
-import Home from "./Home.jsx";
+
+// Import Employee Dashboard
 import EmployeeDashboard from "./EmployeeDashboard.jsx";
-import ApplyLeave from "./ApplyLeave.jsx"; // Import Employee Dashboard
+import ApplyLeave from "./ApplyLeave.jsx"; 
+import ViewLeaves from "./ViewLeaves.jsx";
 
 //import admin pages
 import AdminDashboard from "./adminPages/AdminDashboard.jsx";
@@ -23,9 +25,11 @@ createRoot(document.getElementById("root")).render(
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/home" element={<Home />} />
+
+        {/* Employee */}
         <Route path="/employee-dashboard" element={<EmployeeDashboard />} /> 
         <Route path="/apply-leave" element={<ApplyLeave />} /> 
+        <Route path="/view-leaves" element={<ViewLeaves />} />
 
         {/* admin */}
         <Route path="/admin-dashboard" element={<AdminDashboard />}/>
