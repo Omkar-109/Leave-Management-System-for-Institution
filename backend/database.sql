@@ -397,3 +397,11 @@ CREATE TABLE program_school (
         REFERENCES schools(school_id)
         ON DELETE CASCADE
 );
+
+ALTER TABLE leave
+ADD COLUMN supporting_document BYTEA;
+
+
+ALTER TABLE leave
+ADD COLUMN document_name VARCHAR(255);
+
