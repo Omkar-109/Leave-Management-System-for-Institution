@@ -448,7 +448,7 @@ app.get('/leave-types', async (req, res) => {
 });
 
 
-// to get all employee detqils
+// to get all employee details
 app.get('/employees', async (req, res) => {
   try {
       // Fetch all employees with email and date of joining

@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "./components/navbar.jsx";
 import "./styles/ApplyLeave.css";
 
 const ApplyLeave = () => {
     const [employeeId, setEmployeeId] = useState("");
+    const [leaveTypes, setLeaveTypes] = useState([]);
     const [leaveType, setLeaveType] = useState("");
     const [fromDate, setFromDate] = useState("");
     const [toDate, setToDate] = useState("");
@@ -12,6 +13,27 @@ const ApplyLeave = () => {
     const [error, setError] = useState("");
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchLeaveTypes = async () => {
+            try {
+                const res = await fetch("http://localhost:3000/leave-types");
+                const data = await res.json();
+                setLeaveTypes(data);
+            } catch (err) {
+                console.error("Failed to fetch leave types", err);
+                setError("Unable to load leave types.");
+            }
+        };
+
+        // Auto-fill employee ID from logged-in user (optional)
+        const user = JSON.parse(localStorage.getItem("user"));
+        if (user?.employee_id) {
+            setEmployeeId(user.employee_id);
+        }
+
+        fetchLeaveTypes();
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -60,6 +82,7 @@ const ApplyLeave = () => {
                             value={employeeId}
                             onChange={(e) => setEmployeeId(e.target.value)}
                             required
+                            disabled // optional if auto-filled
                         />
                     </div>
 
@@ -91,9 +114,11 @@ const ApplyLeave = () => {
                             required
                         >
                             <option value="">Select Leave Type</option>
-                            <option value="Sick Leave">Sick Leave</option>
-                            <option value="Casual Leave">Casual Leave</option>
-                            <option value="Annual Leave">Annual Leave</option>
+                            {leaveTypes.map((type) => (
+                                <option key={type.leave_type_id} value={type.name}>
+                                    {type.name}
+                                </option>
+                            ))}
                         </select>
                     </div>
 
