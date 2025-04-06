@@ -78,11 +78,13 @@ const Login = () => {
                 <h1>University</h1>
             </div>
             <div className="login-box">
-                <h2>LOGIN</h2>
+
+                <h2 className="login-h2">LOGIN</h2>
                 
                 {error && <p className="error-message">{error}</p>}
 
                 <form onSubmit={handleLogin}>
+                <div>
                     <label>Login As</label>
                     <select value={role} onChange={(e) => setRole(e.target.value)} required>
                         <option value="">Select Role</option>
@@ -91,7 +93,9 @@ const Login = () => {
                         <option value="Employee">Employee</option>
                         <option value="Office Admin">Office Admin</option>
                     </select>
+                    </div>
 
+<div>
                     <label>Email</label>
                     <input 
                         type="email" 
@@ -100,7 +104,8 @@ const Login = () => {
                         onChange={(e) => setEmail(e.target.value)}
                         required 
                     />
-                    
+     </div>
+                    <div>
                     <label>Password</label>
                     <input 
                         type="password" 
@@ -109,11 +114,11 @@ const Login = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         required 
                     />
-                    
+                    </div>
                     <div className="captcha">
                         <FaSyncAlt className="refresh-icon" onClick={refreshCaptcha} />
                         <span>{captcha.question}</span>
-                        <input
+                        <input 
                             type="number"
                             placeholder="Answer"
                             value={userCaptcha}
@@ -122,7 +127,7 @@ const Login = () => {
                         />
                     </div>
 
-                    <button type="submit" disabled={!email || !password || !role || !userCaptcha}>LOGIN</button>
+                    <button type="submit" >LOGIN</button>
                 </form>
                 {/* <p className="forgot"><a href="#">Forgot password?</a></p> */}
             </div>
