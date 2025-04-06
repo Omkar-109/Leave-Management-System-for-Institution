@@ -7,7 +7,7 @@
 
 body {
     font-family: Arial, sans-serif;
-    background: url('../images/login-bg.jpg') no-repeat center center fixed;
+    background: url('../images/university-bg2.jpg') no-repeat center center fixed;
     background-size: cover;
 }
 
@@ -26,8 +26,7 @@ body {
     top: 0;
     left: 0;
     width: 100%;
-    background: rgba(198, 201, 244, 0.6);
-    backdrop-filter: blur(15px);
+    background: #10316B;
     padding: 15px 0;
     text-align: center;
 }
@@ -41,14 +40,26 @@ body {
 
 /* Login Box */
 .login-box {
-    background: rgba(172, 184, 237, 0.7);
-    backdrop-filter: blur(15px);
+    background: #ffbf34;
     padding: 25px 30px;
     border-radius: 10px;
     width: 300px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
     margin-top: 100px;
+    
+    animation: zoomIn 0.8s ease-out forwards;
 }
+@keyframes zoomIn {
+    from {
+      transform: scale(0);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
 
 .login-box h2 {
     margin-bottom: 15px;
@@ -61,9 +72,10 @@ form {
     gap: 10px;
 }
 
-label {
-    font-size: 14px;
-    color: #000;
+label  {
+    font-size: 16px !important;
+    font-weight: normal !important;
+    color: black !important;
     text-align: left;
 }
 
@@ -90,9 +102,8 @@ select {
     flex: 1;
     padding: 8px;
     border-radius: 5px;
-    border: 1px solid #ccc;
+
     text-align: center;
-    font-weight: bold;
     background: white;
 }
 
@@ -105,17 +116,20 @@ select {
 button {
     margin-top: 10px;
     padding: 10px;
-    border: none;
-    background: #101010;
+    font-weight: bold;
+    background: #10316B;
     color: white;
     font-size: 16px;
+    border: 2px solid #10316B;
     border-radius: 5px;
     cursor: pointer;
     transition: 0.3s ease;
 }
 
 button:hover {
-    background: #555;
+    background: #0B409C;
+    border:2px solid white ;
+    
 }
 
 /* Error message */
@@ -133,7 +147,7 @@ button:hover {
 }
 
 .forgot a {
-    color: white;
+    color: rgb(142, 142, 142);
     text-decoration: none;
     font-weight: bold;
     transition: color 0.3s ease;
@@ -141,4 +155,8 @@ button:hover {
 
 .forgot a:hover {
     color: black;
+}
+
+.login-h2{
+    text-align: center;
 }
