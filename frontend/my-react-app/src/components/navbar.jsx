@@ -13,19 +13,25 @@ const Navbar = () => {
     useEffect(() => {
         const fetchEmployeeName = async () => {
             try {
-                const user = JSON.parse(localStorage.getItem("user"));
+                const userData = localStorage.getItem("user");
+                if (!userData) {
+                    setErrorMsg("No user data found.");
+                    return;
+                }
+
+                const user = JSON.parse(userData);
                 if (!user?.employee_id) {
-                    setErrorMsg("Employee ID not found.");
+                    setErrorMsg("Employee ID not available.");
                     return;
                 }
 
                 const response = await axios.get(`http://localhost:3000/employee/${user.employee_id}`);
-                const emp = response?.data?.employee;
+                const employee = response?.data?.employee;
 
-                if (emp?.name) {
-                    setEmployeeName(emp.name);
+                if (employee?.name) {
+                    setEmployeeName(employee.name);
                 } else {
-                    setErrorMsg("Name not found.");
+                    setErrorMsg("Employee name not found.");
                 }
             } catch (error) {
                 console.error("Error fetching employee name:", error);
@@ -52,7 +58,12 @@ const Navbar = () => {
                     className="user-btn"
                     onClick={() => setDropdownOpen(!isDropdownOpen)}
                 >
-                    {loading ? "Loading..." : errorMsg ? "User" : employeeName} ▼
+                    {loading 
+                        ? "Loading..." 
+                        : errorMsg 
+                            ? "User" 
+                            : employeeName
+                    } ▼
                 </button>
 
                 {isDropdownOpen && (

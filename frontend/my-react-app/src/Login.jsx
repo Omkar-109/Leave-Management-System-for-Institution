@@ -51,6 +51,8 @@ const Login = () => {
             if (!response.ok) {
                 throw new Error(data.error || "Login failed");
             }
+            // After successful login
+            localStorage.setItem("user", JSON.stringify(data.user));
 
             // Redirect based on role
             if (role === "Dean") {
