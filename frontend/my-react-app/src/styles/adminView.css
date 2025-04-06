@@ -153,3 +153,27 @@
     gap: 10px;
   }
   
+
+  .list-header,
+.list-row {
+  display: grid;
+  grid-template-columns: repeat(11, 1fr); /* 11 columns */
+  padding: 12px;
+  border-bottom: 1px solid #e0e0e0;
+  align-items: center;
+  background-color: #fbf9f9;
+}
+
+.leave-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(100px, 1fr));
+  gap: 8px;
+  overflow-x: auto;
+}
+
+@media (max-width: 1200px) {
+  .leave-grid {
+    font-size: 12px;
+    grid-template-columns: repeat(12, minmax(80px, 1fr));
+  }
+}
