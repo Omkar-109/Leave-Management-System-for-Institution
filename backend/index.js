@@ -847,7 +847,7 @@ app.post("/register-admin", async (req, res) => {
 
     res.json({ message: "Admin registered successfully", admin_id });
   } catch (err) {
-    console.error("❌ Error registering admin:", err);
+    console.error("Error registering admin:", err);
     res.status(500).json({ error: "Admin registration failed" });
   }
 });
