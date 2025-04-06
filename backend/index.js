@@ -16,7 +16,7 @@ const saltRounds = 10;
 env.config();
 
 app.use(cors({
-  origin: 'http://localhost:5174', // Replace with your frontend's port
+  origin: 'http://localhost:5173', // Replace with your frontend's port
   credentials: true
 }));
 
@@ -847,7 +847,7 @@ app.post("/register-admin", async (req, res) => {
 
     res.json({ message: "Admin registered successfully", admin_id });
   } catch (err) {
-    console.error("❌ Error registering admin:", err);
+    console.error("Error registering admin:", err);
     res.status(500).json({ error: "Admin registration failed" });
   }
 });
