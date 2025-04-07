@@ -94,14 +94,51 @@ const generatePassword = () => {
   return crypto.randomBytes(8).toString("hex");
 };
 
-// Register Employee (by admin)
+// // Register Employee (by admin)
+// app.post('/register-employee', async (req, res) => {
+//   const { name, email, date_of_joining } = req.body;
+//   const created_at = new Date();
+//   console.log(req.body)
+//   const employees_id = await generateNextId('employees_id', 'EMP', 'employees');
+//   const password = generatePassword();
+//   console.log(password)
+
+//   try {
+//     await db.query(
+//       "INSERT INTO employees (employees_id, name, date_of_joining, created_at) VALUES ($1, $2, $3, $4)",
+//       [employees_id, name, date_of_joining, created_at]
+//     );
+
+//     const credential_id = await generateNextId('credential_id', 'CRD', 'credentials');
+
+//     bcrypt.hash(password, saltRounds, async (err, hash) => {
+//       if (err) {
+//         console.error("Error hashing password:", err);
+//       } else {
+//         await db.query(
+//           "INSERT INTO credentials (credential_id, employee_id, email, password, created_at) VALUES ($1, $2, $3, $4, $5)",
+//           [credential_id, employees_id, email, hash, created_at]
+//         );
+
+//         // Send email with the generated password
+//         //await sendEmail(email, password);
+
+//         res.json({ message: "Employee registered", email, password });
+//       }
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ error: "Registration failed" });
+//   }
+// });
+
+
 app.post('/register-employee', async (req, res) => {
-  const { name, email, date_of_joining } = req.body;
+  const { name, email, date_of_joining, program_id } = req.body;
   const created_at = new Date();
-  console.log(req.body)
   const employees_id = await generateNextId('employees_id', 'EMP', 'employees');
   const password = generatePassword();
-  console.log(password)
+  const credential_id = await generateNextId('credential_id', 'CRD', 'credentials');
 
   try {
     await db.query(
@@ -109,28 +146,55 @@ app.post('/register-employee', async (req, res) => {
       [employees_id, name, date_of_joining, created_at]
     );
 
-    const credential_id = await generateNextId('credential_id', 'CRD', 'credentials');
-
     bcrypt.hash(password, saltRounds, async (err, hash) => {
-      if (err) {
-        console.error("Error hashing password:", err);
-      } else {
+      if (err) return res.status(500).json({ error: 'Error hashing password' });
+
+      await db.query(
+        "INSERT INTO credentials (credential_id, employee_id, email, password, created_at) VALUES ($1, $2, $3, $4, $5)",
+        [credential_id, employees_id, email, hash, created_at]
+      );
+
+      // 🔹 Insert into employee_program
+      await db.query(
+        "INSERT INTO employee_program (employees_id, program_id, created_at) VALUES ($1, $2, $3)",
+        [employees_id, program_id, created_at]
+      );
+
+      // 🔹 Fetch leave types and create leave records
+      const leaveTypes = await db.query('SELECT * FROM "leavetypes"');
+      for (const type of leaveTypes.rows) {
+        const record_id = await generateNextId('record_id', 'LVR', 'leaverecords');
         await db.query(
-          "INSERT INTO credentials (credential_id, employee_id, email, password, created_at) VALUES ($1, $2, $3, $4, $5)",
-          [credential_id, employees_id, email, hash, created_at]
+          `INSERT INTO "leaverecords" 
+          (record_id, employee_id, leave_type, leaves_taken, leaves_added, balance_adjustment, leaves_remaining, updated_at)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+          [
+            record_id,
+            employees_id,
+            type.leave_type,
+            0, // taken
+            type.number_of_leaves, // added
+            0, // balance adjustment
+            type.number_of_leaves, // remaining
+            created_at
+          ]
         );
-
-        // Send email with the generated password
-        //await sendEmail(email, password);
-
-        res.json({ message: "Employee registered", email, password });
       }
+
+      // Success
+      res.json({ message: "Employee registered", email, password });
     });
   } catch (err) {
-    console.error(err);
+    console.error('Registration failed:', err);
     res.status(500).json({ error: "Registration failed" });
   }
 });
+
+
+
+
+
+
 
 // Register Dean (by admin)
 app.post("/register-dean", async (req, res) => {

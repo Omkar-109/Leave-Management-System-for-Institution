@@ -1,14 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Navbar from '../components/navbar';
 import AdminNavbar from '../components/AdminNavbar';
 import "../styles/admin.css"
+
 const RegisterEmployee = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     date_of_joining: '',
+    program_id:''
   });
+
+  const [programs, setPrograms] = useState([]);
+
+  useEffect(() => {
+    // Fetch programs from backend
+    axios.get('http://localhost:3000/programs')
+      .then(res => setPrograms(res.data.programs))
+      .catch(err => console.error('Failed to fetch programs:', err));
+  }, []);
+
 
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
@@ -87,6 +99,25 @@ const RegisterEmployee = () => {
               style={{ width: '100%', padding: '8px' }}
             />
           </div>
+
+          <div>
+            <label>Select Program:</label><br />
+            <select
+              name="program_id"
+              value={formData.program_id}
+              onChange={handleChange}
+              required
+            
+            >
+              <option value="">-- Select Program --</option>
+              {programs.map((prog) => (
+                <option key={prog.program_id} value={prog.program_id}>
+                  {prog.program_name}
+                </option>
+              ))}
+            </select>
+          </div>
+
 
           <button type="submit" disabled={loading} style={{ padding: '10px 20px' }}>
             {loading ? 'Registering...' : 'Register Employee'}
