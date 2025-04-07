@@ -792,33 +792,65 @@ app.put('/leave/update-status', async (req, res) => {
   const { leave_id, role, status } = req.body;
 
   if (!leave_id || !role || !status) {
-      return res.status(400).json({ message: 'leave_id, role, and status are required.' });
+    return res.status(400).json({ message: 'leave_id, role, and status are required.' });
   }
 
   try {
-      let columnToUpdate = null;
+    let columnToUpdate = null;
+    let query = '';
+    let values = [];
 
-      if (role === 'dean') {
-          columnToUpdate = 'dean_status';
-      } else if (role === 'program director') {
-          columnToUpdate = 'program_director_status';
+    if (role === 'dean') {
+      columnToUpdate = 'dean_status';
+
+      // Update dean_status and main status column if status is 'approved'
+      if (status.toLowerCase() === 'approved') {
+        query = `
+          UPDATE public.leave
+          SET ${columnToUpdate} = $1,
+              status = $2,
+              updated_at = CURRENT_DATE
+          WHERE leave_id = $3
+        `;
+        values = [status, 'approved', leave_id];
       } else {
-          return res.status(400).json({ message: 'Invalid role. Use "dean" or "program director".' });
+        // Just update dean_status
+        query = `
+          UPDATE public.leave
+          SET ${columnToUpdate} = $1,
+              updated_at = CURRENT_DATE
+          WHERE leave_id = $2
+        `;
+        values = [status, leave_id];
       }
 
-      const query = `
-          UPDATE public.leave
-          SET ${columnToUpdate} = $1, updated_at = CURRENT_DATE
-          WHERE leave_id = $2
-      `;
-      await db.query(query, [status, leave_id]);
+    } else if (role === 'program director') {
+      columnToUpdate = 'program_director_status';
 
-      return res.status(200).json({ message: `${role}'s status updated to ${status}` });
+      query = `
+        UPDATE public.leave
+        SET ${columnToUpdate} = $1,
+            updated_at = CURRENT_DATE
+        WHERE leave_id = $2
+      `;
+      values = [status, leave_id];
+
+    } else {
+      return res.status(400).json({ message: 'Invalid role. Use "dean" or "program director".' });
+    }
+
+    await db.query(query, values);
+
+    return res.status(200).json({ message: `${role}'s status updated to ${status}` });
+
   } catch (error) {
-      console.error('Error updating leave status:', error.message);
-      return res.status(500).json({ message: 'Internal Server Error' });
+    console.error('Error updating leave status:', error.message);
+    return res.status(500).json({ message: 'Internal Server Error' });
   }
 });
+
+
+
 
 app.get('/leave/pending', async (req, res) => {
   try {
@@ -929,6 +961,91 @@ app.get('/leave/:leave_id/document', async (req, res) => {
   } catch (err) {
     console.error("Error fetching document:", err);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+app.put('/leave/update-main-status', async (req, res) => {
+  const { leave_id, status } = req.body;
+
+  if (!leave_id || !status) {
+    return res.status(400).json({ message: 'leave_id and status are required.' });
+  }
+
+  try {
+    const query = `
+      UPDATE public.leave
+      SET status = $1,
+          updated_at = CURRENT_DATE
+      WHERE leave_id = $2
+    `;
+
+    await db.query(query, [status.toLowerCase(), leave_id]);
+
+    return res.status(200).json({
+      message: `Leave status updated to '${status}'`,
+      leave_id
+    });
+  } catch (error) {
+    console.error('Error updating main leave status:', error.message);
+    return res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+
+
+///
+app.post('/leave-approval', async (req, res) => {
+  const {
+    leave_id,
+    approver_id,
+    role,
+    action,
+    reason,
+    note,
+    action_date
+  } = req.body;
+
+  if (!leave_id || !approver_id || !role) {
+    return res.status(400).json({
+      message: 'leave_id, approver_id, and role are required.'
+    });
+  }
+
+  try {
+    // Generate workflow_id automatically
+    const workflow_id = await generateNextId('workflow_id', 'WF', '"leaveApprovalWorkflow"');
+
+    const insertQuery = `
+      INSERT INTO public."leaveApprovalWorkflow" (
+        workflow_id,
+        leave_id,
+        approver_id,
+        role,
+        action,
+        reason,
+        note,
+        action_date
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    `;
+
+    const values = [
+      workflow_id,
+      leave_id,
+      approver_id,
+      role,
+      action || null,
+      reason || null,
+      note || null,
+      action_date || new Date().toISOString().split('T')[0]
+    ];
+
+    await db.query(insertQuery, values);
+
+    return res.status(201).json({ message: 'Leave approval record added successfully.', workflow_id });
+  } catch (error) {
+    console.error('Error inserting leave approval record:', error.message);
+    return res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 
