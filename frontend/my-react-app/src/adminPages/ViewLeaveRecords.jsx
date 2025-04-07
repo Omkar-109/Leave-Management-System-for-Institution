@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import '../styles/AdminView.css';
 import Navbar from '../components/navbar';
 import AdminNavbar from '../components/AdminNavbar';
@@ -28,6 +30,67 @@ const ViewLeaveRecords = () => {
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);
     return date.toLocaleDateString();
+  };
+
+  const generatePDFReport = () => {
+    if (!leaves || leaves.length === 0) {
+      alert('No leave records available.');
+      return;
+    }
+  
+    const doc = new jsPDF();
+    doc.setFontSize(18);
+    doc.text('Leave Report', 14, 20);
+  
+    const statuses = ['approved', 'rejected', 'pending'];
+    let currentY = 30;
+  
+    statuses.forEach(status => {
+      const filtered = leaves.filter(l => l.status?.toLowerCase() === status);
+  
+      if (filtered.length === 0) return;
+  
+      
+  
+      // Section title
+      doc.setFontSize(14);
+      doc.text(`${status.charAt(0).toUpperCase() + status.slice(1)} Leaves (${filtered.length} entries)`, 14, currentY);
+      currentY += 6;
+  
+      // Table data
+      const tableData = filtered.map(leave => {
+        const start = new Date(leave.start_date);
+        const end = new Date(leave.end_date);
+        const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+        return [
+          leave.leave_id,
+          leave.employees_id,
+          leave.name,
+          leave.leave_type,
+          days,
+          new Date(leave.start_date).toLocaleDateString(),
+          new Date(leave.end_date).toLocaleDateString(),
+          leave.reason,
+          new Date(leave.created_at).toLocaleDateString()
+        ];
+      });
+  
+      autoTable(doc, {
+        startY: currentY,
+        head: [[
+          'Leave ID', 'Employee ID', 'Name', 'Leave Type', 'Days',
+          'From', 'To', 'Reason', 'Created At'
+        ]],
+        body: tableData,
+        styles: { fontSize: 8 },
+        theme: 'striped',
+        margin: { top: 10 }
+      });
+  
+      currentY = doc.lastAutoTable.finalY + 10;
+    });
+  
+    doc.save('Grouped_Leave_Report.pdf');
   };
 
   return (
@@ -82,6 +145,9 @@ const ViewLeaveRecords = () => {
             })}
           </div>
         )}
+        <button onClick={generatePDFReport} className="btn-report">
+          Generate Report
+        </button>
       </div>
     </>
   );
