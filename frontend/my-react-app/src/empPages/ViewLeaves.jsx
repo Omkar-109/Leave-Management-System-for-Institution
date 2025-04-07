@@ -58,10 +58,11 @@ const ViewLeaveApplications = () => {
                                 <th>Start Date</th>
                                 <th>End Date</th>
                                 <th>Type</th>
-                                <th>Status</th>
+                                
                                 <th>PD Status</th>
                                 <th>Dean Status</th>
                                 <th>Reason</th>
+                                <th>Overall Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -71,10 +72,10 @@ const ViewLeaveApplications = () => {
                                     <td>{new Date(leave.start_date).toLocaleDateString()}</td>
                                     <td>{new Date(leave.end_date).toLocaleDateString()}</td>
                                     <td>{leave.leave_type || "N/A"}</td>
-                                    <td>{leave.status}</td>
                                     <td>{leave.program_director_status}</td>
                                     <td>{leave.dean_status}</td>
                                     <td>{leave.reason}</td>
+                                    <td>{leave.status}</td>
                                 </tr>
                             ))}
                         </tbody>
