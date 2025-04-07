@@ -877,7 +877,16 @@ app.put('/leave/update-status', async (req, res) => {
           WHERE leave_id = $3
         `;
         values = [status, 'approved', leave_id];
-      } else {
+      } else if (status.toLowerCase() === 'rejected') {
+        query = `
+          UPDATE public.leave
+          SET ${columnToUpdate} = $1,
+              status = 'rejected',
+              updated_at = CURRENT_DATE
+          WHERE leave_id = $2
+        `;
+        values = [status, leave_id];
+       } else {
         // Just update dean_status
         query = `
           UPDATE public.leave
@@ -891,13 +900,23 @@ app.put('/leave/update-status', async (req, res) => {
     } else if (role === 'program director') {
       columnToUpdate = 'program_director_status';
 
+      if (status.toLowerCase() === 'rejected') {
+        query = `
+          UPDATE public.leave
+          SET ${columnToUpdate} = $1,
+              status = 'rejected',
+              updated_at = CURRENT_DATE
+          WHERE leave_id = $2
+        `;
+        values = [status, leave_id];
+      } else {
       query = `
         UPDATE public.leave
         SET ${columnToUpdate} = $1,
             updated_at = CURRENT_DATE
         WHERE leave_id = $2
       `;
-      values = [status, leave_id];
+      values = [status, leave_id];}
 
     } else {
       return res.status(400).json({ message: 'Invalid role. Use "dean" or "program director".' });
