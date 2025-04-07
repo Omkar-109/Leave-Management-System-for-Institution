@@ -49,11 +49,11 @@ body {
   
   .admin-form button {
     padding: 12px;
-    background-color: #007BFF;
+    background-color: #10316B;
     color: white;
     font-size: 16px;
     font-weight: bold;
-    border: none;
+    border: 2px solid #10316B;
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out;
@@ -61,6 +61,7 @@ body {
   
   .admin-form button:hover {
     background-color: #0056b3;
+    border: 2px solid white;
   }
   
   li{

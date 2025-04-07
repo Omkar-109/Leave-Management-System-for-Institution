@@ -66,6 +66,7 @@ const DeanDashboard = ({ user }) => {
                 <h2>Dean Dashboard</h2>
                 <button className="toggle-btn" onClick={() => setShowTable(!showTable)}>
                     {showTable ? "Hide Leave Applications" : "Show Leave Applications"}
+                    <span className={`toggle-icon ${showTable ? "icon-hide" : "icon-show"}`}></span>
                 </button>
 
                 {error && <p className="error-msg">{error}</p>}
