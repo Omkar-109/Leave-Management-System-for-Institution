@@ -11,8 +11,8 @@ const EmployeeDashboard = ({ user }) => {
         <div className="employee-dashboard">
             {/* Navbar with user info */}
             <Navbar user={user} />
-
             <div className="dashboard-container">
+            <h2>Employee Dashboard</h2>
                 <div className="card-container">
                     <Card title="Apply for Leave" onClick={() => navigate("/apply-leave")} />
                     <Card title="View Leave Applications" onClick={() => navigate("/view-leaves")} />
