@@ -54,6 +54,18 @@ const RegisterPDDean = () => {
 
       <form onSubmit={handleSubmit}>
         <ul className="admin-form">
+        <li>
+            <label htmlFor="role">Role</label>
+            <select
+              name="role"
+              id="role"
+              value={formData.role}
+              onChange={handleChange}
+            >
+              <option value="Dean">Dean</option>
+              <option value="Program Director">Program Director</option>
+            </select>
+          </li>
           <li>
             <label htmlFor="managed_entity_id">Managed Entity ID</label>
             <input
@@ -78,18 +90,7 @@ const RegisterPDDean = () => {
             />
           </li>
 
-          <li>
-            <label htmlFor="role">Role</label>
-            <select
-              name="role"
-              id="role"
-              value={formData.role}
-              onChange={handleChange}
-            >
-              <option value="Dean">Dean</option>
-              <option value="Program Director">Program Director</option>
-            </select>
-          </li>
+          
 
           <li>
             <button type="submit">Register</button>
