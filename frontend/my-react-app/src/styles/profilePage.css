@@ -1,0 +1,27 @@
+.profile-container {
+    max-width: 600px;
+    margin: auto;
+    padding: 1.5rem;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.profile-section {
+    margin-bottom: 1.2rem;
+}
+
+input {
+    margin-left: 1rem;
+    padding: 0.3rem;
+}
+
+button {
+    margin-left: 0.5rem;
+    padding: 0.3rem 0.6rem;
+    cursor: pointer;
+}
+
+.success-msg {
+    color: green;
+    margin-bottom: 1rem;
+}

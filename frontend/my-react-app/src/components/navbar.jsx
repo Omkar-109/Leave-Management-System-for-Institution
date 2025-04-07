@@ -5,13 +5,13 @@ import "../styles/navbar.css";
 
 const Navbar = () => {
     const navigate = useNavigate();
-    const [employeeName, setEmployeeName] = useState("User");
+    const [name, setName] = useState("User");
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const [loading, setLoading] = useState(true);
     const [errorMsg, setErrorMsg] = useState("");
 
     useEffect(() => {
-        const fetchEmployeeName = async () => {
+        const fetchName = async () => {
             try {
                 const userData = localStorage.getItem("user");
                 if (!userData) {
@@ -20,28 +20,45 @@ const Navbar = () => {
                 }
 
                 const user = JSON.parse(userData);
-                if (!user?.employee_id) {
-                    setErrorMsg("Employee ID not available.");
+                const { id, role } = user;
+
+                if (!id || !role) {
+                    setErrorMsg("Invalid user data.");
                     return;
                 }
 
-                const response = await axios.get(`http://localhost:3000/employee/${user.employee_id}`);
-                const employee = response?.data?.employee;
-
-                if (employee?.name) {
-                    setEmployeeName(employee.name);
+                let url = "";
+                if (role === "employee") {
+                    url = `http://localhost:3000/employee/${id}`;
+                } else if (role === "program_director") {
+                    url = `http://localhost:3000/program-director/${id}`;
+                } else if (role === "dean") {
+                    url = `http://localhost:3000/dean/${id}`;
+                } else if (role === "office_admin") {
+                    url = `http://localhost:3000/admin/${id}`;
                 } else {
-                    setErrorMsg("Employee name not found.");
+                    setErrorMsg("Unknown role.");
+                    return;
                 }
+
+                const response = await axios.get(url);
+                const data = response.data;
+
+                if (data?.employee?.name) setName(data.employee.name);
+                else if (data?.program_director?.name) setName(data.program_director.name);
+                else if (data?.dean?.name) setName(data.dean.name);
+                else if (data?.admin?.name) setName(data.admin.name);
+                else setErrorMsg("Name not found.");
+
             } catch (error) {
-                console.error("Error fetching employee name:", error);
-                setErrorMsg("Failed to fetch employee name.");
+                console.error("Error fetching user name:", error);
+                setErrorMsg("Failed to fetch user name.");
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchEmployeeName();
+        fetchName();
     }, []);
 
     const handleLogout = () => {
@@ -54,21 +71,21 @@ const Navbar = () => {
             <div className="navbar-title">University</div>
 
             <div className="navbar-user">
-                <button 
+                <button
                     className="user-btn"
                     onClick={() => setDropdownOpen(!isDropdownOpen)}
                 >
-                    {loading 
-                        ? "Loading..." 
-                        : errorMsg 
-                            ? "User" 
-                            : employeeName
+                    {loading
+                        ? "Loading..."
+                        : errorMsg
+                            ? "User"
+                            : name
                     } ▼
                 </button>
 
                 {isDropdownOpen && (
                     <div className="dropdown-menu">
-                        <button onClick={() => navigate("/profile")}>View Profile</button>
+                        <button onClick={() => navigate("/profilePage")}>View Profile</button>
                         <button onClick={handleLogout}>Logout</button>
                     </div>
                 )}
