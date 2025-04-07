@@ -64,7 +64,7 @@ const RegisterEmployee = () => {
         {errorMsg && <p style={{ color: 'red' }}>{errorMsg}</p>}
 
         <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '10px' }}>
+          <div>
             <label>Full Name:</label><br />
             <input
               type="text"
@@ -72,11 +72,11 @@ const RegisterEmployee = () => {
               value={formData.name}
               onChange={handleChange}
               required
-              style={{ width: '100%', padding: '8px' }}
+            
             />
           </div>
 
-          <div style={{ marginBottom: '10px' }}>
+          <div>
             <label>Email Address:</label><br />
             <input
               type="email"
@@ -84,11 +84,11 @@ const RegisterEmployee = () => {
               value={formData.email}
               onChange={handleChange}
               required
-              style={{ width: '100%', padding: '8px' }}
+              
             />
           </div>
 
-          <div style={{ marginBottom: '10px' }}>
+          <div>
             <label>Date of Joining:</label><br />
             <input
               type="date"
@@ -96,7 +96,6 @@ const RegisterEmployee = () => {
               value={formData.date_of_joining}
               onChange={handleChange}
               required
-              style={{ width: '100%', padding: '8px' }}
             />
           </div>
 
@@ -119,7 +118,7 @@ const RegisterEmployee = () => {
           </div>
 
 
-          <button type="submit" disabled={loading} style={{ padding: '10px 20px' }}>
+          <button type="submit" disabled={loading}>
             {loading ? 'Registering...' : 'Register Employee'}
           </button>
         </form>
