@@ -12,16 +12,18 @@
     border-radius: 10px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     min-width: 220px;
+    min-height: 100px;
     text-align: center;
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-family: sans-serif;
+    
   }
   
   .stat-label {
-    font-size: 16px;
-    font-weight: 500;
+    font-size: 20px;
+    font-weight: 700;
     flex: 1;
     text-align: left;
   }

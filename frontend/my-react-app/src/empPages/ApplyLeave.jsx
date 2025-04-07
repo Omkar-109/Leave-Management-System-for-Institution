@@ -114,8 +114,8 @@ const ApplyLeave = () => {
                         >
                             <option value="">Select Leave Type</option>
                             {leaveTypes.map((type) => (
-                                <option key={type.leave_type_id} value={type.name}>
-                                    {type.name}
+                                <option key={type.leave_type_id} value={type.leave_type}>
+                                    {type.leave_type}
                                 </option>
                             ))}
                         </select>
