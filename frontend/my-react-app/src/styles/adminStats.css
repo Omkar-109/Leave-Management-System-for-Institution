@@ -4,10 +4,13 @@
     padding: 20px;
     gap: 20px;
     flex-wrap: wrap;
+    border-top: solid 1px gray;
+    margin: 0px 10px;
   }
   
   .stat-card {
-    background-color: #ffd666;
+    background-color: #E23E57;
+    color: white;
     padding: 20px 30px;
     border-radius: 10px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
