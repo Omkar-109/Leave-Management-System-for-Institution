@@ -1,27 +1,67 @@
 .profile-container {
-    max-width: 600px;
-    margin: auto;
-    padding: 1.5rem;
-    background: #f9f9f9;
-    border-radius: 8px;
+    padding: 30px;
+    background: linear-gradient(135deg, #f3f4f6, #e2e8f0);
+    min-height: 100vh;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
 }
 
-.profile-section {
-    margin-bottom: 1.2rem;
+.profile-card {
+    max-width: 850px;
+    margin: 40px auto;
+    background-color: #fff;
+    padding: 35px 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.5s ease;
 }
 
-input {
-    margin-left: 1rem;
-    padding: 0.3rem;
+.profile-heading {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 28px;
+    color: #2c3e50;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 10px;
 }
 
-button {
-    margin-left: 0.5rem;
-    padding: 0.3rem 0.6rem;
-    cursor: pointer;
+.profile-table {
+    width: 100%;
+    border-collapse: collapse;
 }
 
-.success-msg {
-    color: green;
-    margin-bottom: 1rem;
+.profile-table td {
+    padding: 14px 10px;
+    border-bottom: 1px solid #e0e0e0;
+    color: #555;
+    vertical-align: top;
+}
+
+.profile-table td:first-child {
+    font-weight: 600;
+    color: #1a202c;
+    width: 220px;
+}
+
+.profile-table ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
+.profile-table li {
+    margin-bottom: 6px;
+    list-style-type: disc;
+}
+
+/* Loading/Error text */
+.profile-container p {
+    text-align: center;
+    font-size: 18px;
+    color: #555;
+    margin-top: 80px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }

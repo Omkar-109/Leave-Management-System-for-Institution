@@ -17,15 +17,18 @@ const ProfilePage = () => {
                 if (user.role === "employee") {
                     response = await axios.get(`http://localhost:3000/employee/${user.id}`);
                     setUserData(response.data.employee);
+                } else if (user.role === "program_director") {
+                    response = await axios.get(`http://localhost:3000/program-director/${user.id}`);
+                    setUserData(response.data.program_director);
+                } else if (user.role === "dean") {
+                    response = await axios.get(`http://localhost:3000/dean/${user.id}`);
+                    setUserData(response.data.dean);
+                } else if (user.role === "office_admin") {
+                    response = await axios.get(`http://localhost:3000/admin/${user.id}`);
+                    setUserData(response.data.admin);
                 } else {
-                    // For Dean, PD, or Admin — mock data for now, or fetch from DB when ready
-                    setUserData({
-                        id: user.id,
-                        role: user.role.replace("_", " "),
-                        email: user.id + "@university.edu"
-                    });
+                    throw new Error("Invalid user role.");
                 }
-
             } catch (err) {
                 setError("Failed to load profile data.");
                 console.error(err);
@@ -37,48 +40,56 @@ const ProfilePage = () => {
         fetchData();
     }, [user.id, user.role]);
 
-    if (loading) return <div className="profile-container"><Navbar /><p>Loading...</p></div>;
+    if (loading) return <div className="profile-container"><Navbar /><p>Loading profile...</p></div>;
     if (error) return <div className="profile-container"><Navbar /><p>{error}</p></div>;
 
     return (
         <div className="profile-container">
             <Navbar />
-            <div className="profile-box">
-                <h2>My Profile</h2>
-                <table>
+            <div className="profile-card">
+                <h2 className="profile-heading">👤 My Profile</h2>
+                <table className="profile-table">
                     <tbody>
                         <tr>
-                            <td><strong>ID</strong></td>
+                            <td>ID</td>
                             <td>{userData.employees_id || userData.id}</td>
                         </tr>
                         <tr>
-                            <td><strong>Name</strong></td>
+                            <td>Name</td>
                             <td>{userData.name || "N/A"}</td>
                         </tr>
                         <tr>
-                            <td><strong>Email</strong></td>
+                            <td>Email</td>
                             <td>{userData.email}</td>
                         </tr>
                         <tr>
-                            <td><strong>Role</strong></td>
+                            <td>Role</td>
                             <td>{user.role.replace("_", " ")}</td>
                         </tr>
                         {user.role === "employee" && (
                             <>
                                 <tr>
-                                    <td><strong>Date of Joining</strong></td>
+                                    <td>Date of Joining</td>
                                     <td>{userData.date_of_joining?.split("T")[0]}</td>
                                 </tr>
                                 <tr>
-                                    <td><strong>Addresses</strong></td>
+                                    <td>Addresses</td>
                                     <td>
-                                        <ul>{userData.addresses.map((addr, idx) => <li key={idx}>{addr}</li>)}</ul>
+                                        <ul>
+                                            {userData.addresses.map((addr, idx) => (
+                                                <li key={idx}>{addr}</li>
+                                            ))}
+                                        </ul>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td><strong>Phones</strong></td>
+                                    <td>Phones</td>
                                     <td>
-                                        <ul>{userData.phones.map((phone, idx) => <li key={idx}>{phone}</li>)}</ul>
+                                        <ul>
+                                            {userData.phones.map((phone, idx) => (
+                                                <li key={idx}>{phone}</li>
+                                            ))}
+                                        </ul>
                                     </td>
                                 </tr>
                             </>
