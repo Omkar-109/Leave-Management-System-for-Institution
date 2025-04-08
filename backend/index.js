@@ -34,7 +34,7 @@ app.use(
   })
 );
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json()); 
+app.use(bodyParser.json());
 app.use(express.static("public"));
 
 app.use(passport.initialize());
@@ -43,21 +43,21 @@ app.use(passport.session());
 // Function to Generate Next ID
 const generateNextId = async (column, prefix, table) => {
   try {
-      // Query to get the latest ID from the specified column of the specified table
-      const result = await db.query(`SELECT ${column} FROM ${table} ORDER BY ${column} DESC LIMIT 1`);
-    
-      if (result.rows.length === 0) {
-          // If no records exist, return the first ID with the specified prefix and padding
-          return `${prefix}0001`;
-      }
+    // Query to get the latest ID from the specified column of the specified table
+    const result = await db.query(`SELECT ${column} FROM ${table} ORDER BY ${column} DESC LIMIT 1`);
 
-      // Extract the last ID from the result and increment the number part
-      const lastId = result.rows[0][column];
-      const num = parseInt(lastId.substring(prefix.length)) + 1; // Extract number and increment
-      return `${prefix}${num.toString().padStart(4, '0')}`; // Format the ID with leading zeros
+    if (result.rows.length === 0) {
+      // If no records exist, return the first ID with the specified prefix and padding
+      return `${prefix}0001`;
+    }
+
+    // Extract the last ID from the result and increment the number part
+    const lastId = result.rows[0][column];
+    const num = parseInt(lastId.substring(prefix.length)) + 1; // Extract number and increment
+    return `${prefix}${num.toString().padStart(4, '0')}`; // Format the ID with leading zeros
   } catch (error) {
-      console.error(`Error generating ID for ${table}:`, error.message);
-      throw new Error('ID generation failed');
+    console.error(`Error generating ID for ${table}:`, error.message);
+    throw new Error('ID generation failed');
   }
 };
 
@@ -181,6 +181,8 @@ app.post('/register-employee', async (req, res) => {
         );
       }
 
+      // Send email with the generated password
+      await sendEmail(email, password);
       // Success
       res.json({ message: "Employee registered", email, password });
     });
@@ -214,7 +216,7 @@ app.post("/register-dean", async (req, res) => {
     );
 
     // Send email with the generated password
-    // await sendEmail(email, password);
+    await sendEmail(email, password);
 
     res.json({ message: "Dean registered", email, password });
   } catch (err) {
@@ -242,7 +244,7 @@ app.post("/register-program-director", async (req, res) => {
     );
 
     // Send email with the generated password
-    // await sendEmail(email, password);
+    await sendEmail(email, password);
 
     res.json({ message: "Program Director registered", email, password });
   } catch (err) {
@@ -286,7 +288,7 @@ app.post("/register", async (req, res) => {
               "UPDATE credentials SET password = $1 WHERE email = $2",
               [hash, email]
             );
-            
+
             // Step 5: Respond with success message
             res.json({ message: "Password updated successfully" });
           });
@@ -376,7 +378,7 @@ app.get("/logout", (req, res) => {
 
 
 app.post("/login", (req, res, next) => {
-    console.log(req.body)
+  console.log(req.body)
   passport.authenticate("local", (err, user, info) => {
     if (err) return next(err);
     if (!user) return res.status(401).json({ error: "Invalid credentials" });
@@ -416,11 +418,11 @@ app.post('/programs', async (req, res) => {
 // get program
 app.get('/programs', async (req, res) => {
   try {
-      const result = await db.query('SELECT * FROM programs ORDER BY created_at DESC');
-      res.status(200).json({ programs: result.rows });
+    const result = await db.query('SELECT * FROM programs ORDER BY created_at DESC');
+    res.status(200).json({ programs: result.rows });
   } catch (error) {
-      console.error('Error fetching programs:', error);
-      res.status(500).json({ error: 'Failed to fetch programs' });
+    console.error('Error fetching programs:', error);
+    res.status(500).json({ error: 'Failed to fetch programs' });
   }
 });
 
@@ -460,28 +462,28 @@ app.post('/leave-types', async (req, res) => {
 
   // Validate required fields
   if (!faculty_type || !leave_type || !number_of_leaves) {
-      return res.status(400).json({ error: "faculty_type, leave_type, and number_of_leaves are required." });
+    return res.status(400).json({ error: "faculty_type, leave_type, and number_of_leaves are required." });
   }
 
   try {
-      const leave_type_id = await generateNextId("leave_type_id", "LVT", "leavetypes");
-      const created_at = new Date().toISOString().split("T")[0]; // YYYY-MM-DD format
+    const leave_type_id = await generateNextId("leave_type_id", "LVT", "leavetypes");
+    const created_at = new Date().toISOString().split("T")[0]; // YYYY-MM-DD format
 
-      // Ensure reset_date is either NULL or in the correct format
-      const formattedResetDate = reset_date ? new Date(reset_date).toISOString().split("T")[0] : null;
+    // Ensure reset_date is either NULL or in the correct format
+    const formattedResetDate = reset_date ? new Date(reset_date).toISOString().split("T")[0] : null;
 
-      const query = `
+    const query = `
           INSERT INTO leavetypes (leave_type_id, faculty_type, leave_type, number_of_leaves, reset_frequency, reset_date, created_at)
           VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`;
 
-      const values = [leave_type_id, faculty_type, leave_type, number_of_leaves, reset_frequency, formattedResetDate, created_at];
+    const values = [leave_type_id, faculty_type, leave_type, number_of_leaves, reset_frequency, formattedResetDate, created_at];
 
-      const result = await db.query(query, values);
+    const result = await db.query(query, values);
 
-      res.status(201).json({ message: "Leave type added successfully", leaveType: result.rows[0] });
+    res.status(201).json({ message: "Leave type added successfully", leaveType: result.rows[0] });
   } catch (error) {
-      console.error("Error adding leave type:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error adding leave type:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
@@ -503,11 +505,11 @@ app.post('/leave-types', async (req, res) => {
 // 🔹 Get All Leave Types
 app.get('/leave-types', async (req, res) => {
   try {
-      const result = await db.query(`SELECT * FROM "leavetypes" ORDER BY created_at DESC`);
-      res.status(200).json(result.rows);
+    const result = await db.query(`SELECT * FROM "leavetypes" ORDER BY created_at DESC`);
+    res.status(200).json(result.rows);
   } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Failed to fetch leave types' });
+    console.error(error);
+    res.status(500).json({ error: 'Failed to fetch leave types' });
   }
 });
 
@@ -515,56 +517,56 @@ app.get('/leave-types', async (req, res) => {
 // to get all employee details
 app.get('/employees', async (req, res) => {
   try {
-      // Fetch all employees with email and date of joining
-      const employeesQuery = `
+    // Fetch all employees with email and date of joining
+    const employeesQuery = `
           SELECT e.employees_id, e.name, c.email, e.date_of_joining
           FROM employees e
           JOIN credentials c ON e.employees_id = c.employee_id
       `;
-      const employeesResult = await db.query(employeesQuery);
+    const employeesResult = await db.query(employeesQuery);
 
-      if (employeesResult.rows.length === 0) {
-          return res.status(404).json({ error: "No employees found." });
-      }
+    if (employeesResult.rows.length === 0) {
+      return res.status(404).json({ error: "No employees found." });
+    }
 
-      const employees = [];
+    const employees = [];
 
-      // Fetch all addresses and phones in one query to optimize performance
-      const [addressesResult, phonesResult] = await Promise.all([
-          db.query(`SELECT employee_id, address FROM "employeeaddresses"`),
-          db.query(`SELECT employee_id, phone FROM employee_phones`)
-      ]);
+    // Fetch all addresses and phones in one query to optimize performance
+    const [addressesResult, phonesResult] = await Promise.all([
+      db.query(`SELECT employee_id, address FROM "employeeaddresses"`),
+      db.query(`SELECT employee_id, phone FROM employee_phones`)
+    ]);
 
-      // Create a map for quick lookup
-      const addressMap = addressesResult.rows.reduce((acc, row) => {
-          acc[row.employee_id] = acc[row.employee_id] || [];
-          acc[row.employee_id].push(row.address);
-          return acc;
-      }, {});
+    // Create a map for quick lookup
+    const addressMap = addressesResult.rows.reduce((acc, row) => {
+      acc[row.employee_id] = acc[row.employee_id] || [];
+      acc[row.employee_id].push(row.address);
+      return acc;
+    }, {});
 
-      const phoneMap = phonesResult.rows.reduce((acc, row) => {
-          acc[row.employee_id] = acc[row.employee_id] || [];
-          acc[row.employee_id].push(row.phone);
-          return acc;
-      }, {});
+    const phoneMap = phonesResult.rows.reduce((acc, row) => {
+      acc[row.employee_id] = acc[row.employee_id] || [];
+      acc[row.employee_id].push(row.phone);
+      return acc;
+    }, {});
 
-      // Construct the response
-      employeesResult.rows.forEach(employee => {
-          employees.push({
-              employees_id: employee.employees_id,
-              name: employee.name,
-              email: employee.email,
-              date_of_joining: employee.date_of_joining,
-              addresses: addressMap[employee.employees_id] || [],
-              phones: phoneMap[employee.employees_id] || []
-          });
+    // Construct the response
+    employeesResult.rows.forEach(employee => {
+      employees.push({
+        employees_id: employee.employees_id,
+        name: employee.name,
+        email: employee.email,
+        date_of_joining: employee.date_of_joining,
+        addresses: addressMap[employee.employees_id] || [],
+        phones: phoneMap[employee.employees_id] || []
       });
+    });
 
-      res.status(200).json({ employees });
+    res.status(200).json({ employees });
 
   } catch (error) {
-      console.error("Error fetching employees:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error fetching employees:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 // get http://localhost:3000/employees
@@ -573,42 +575,42 @@ app.get('/employees', async (req, res) => {
 // to get an employee details
 app.get('/employee/:employee_id', async (req, res) => {
   const { employee_id } = req.params;
-console.log(req.params);
+  console.log(req.params);
   try {
-      // Fetch employee details including date of joining
-      const employeeQuery = `
+    // Fetch employee details including date of joining
+    const employeeQuery = `
           SELECT e.employees_id, e.name, c.email, e.date_of_joining
           FROM employees e
           JOIN credentials c ON e.employees_id = c.employee_id
           WHERE e.employees_id = $1
       `;
-      const employeeResult = await db.query(employeeQuery, [employee_id]);
+    const employeeResult = await db.query(employeeQuery, [employee_id]);
 
-      if (employeeResult.rows.length === 0) {
-          return res.status(404).json({ error: "Employee not found." });
-      }
+    if (employeeResult.rows.length === 0) {
+      return res.status(404).json({ error: "Employee not found." });
+    }
 
-      // Execute multiple queries concurrently
-      const [addressResult, phoneResult] = await Promise.all([
-          db.query(`SELECT address FROM "employeeaddresses" WHERE employee_id = $1`, [employee_id]),
-          db.query(`SELECT phone FROM employee_phones WHERE employee_id = $1`, [employee_id])
-      ]);
+    // Execute multiple queries concurrently
+    const [addressResult, phoneResult] = await Promise.all([
+      db.query(`SELECT address FROM "employeeaddresses" WHERE employee_id = $1`, [employee_id]),
+      db.query(`SELECT phone FROM employee_phones WHERE employee_id = $1`, [employee_id])
+    ]);
 
-      // Construct response
-      const employee = {
-          employees_id: employeeResult.rows[0].employees_id,
-          name: employeeResult.rows[0].name,
-          email: employeeResult.rows[0].email,
-          date_of_joining: employeeResult.rows[0].date_of_joining,
-          addresses: addressResult.rows.length > 0 ? addressResult.rows.map(row => row.address) : [],
-          phones: phoneResult.rows.length > 0 ? phoneResult.rows.map(row => row.phone) : []
-      };
+    // Construct response
+    const employee = {
+      employees_id: employeeResult.rows[0].employees_id,
+      name: employeeResult.rows[0].name,
+      email: employeeResult.rows[0].email,
+      date_of_joining: employeeResult.rows[0].date_of_joining,
+      addresses: addressResult.rows.length > 0 ? addressResult.rows.map(row => row.address) : [],
+      phones: phoneResult.rows.length > 0 ? phoneResult.rows.map(row => row.phone) : []
+    };
 
-      res.status(200).json({ employee });
+    res.status(200).json({ employee });
 
   } catch (error) {
-      console.error("Error fetching employee details:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error fetching employee details:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
@@ -620,17 +622,17 @@ app.post('/employee/update-name', async (req, res) => {
   const { employee_id, name } = req.body;
 
   if (!employee_id || !name) {
-      return res.status(400).json({ error: "Employee ID and Name are required." });
+    return res.status(400).json({ error: "Employee ID and Name are required." });
   }
 
   try {
-      await db.query(`UPDATE employees SET name = $1 WHERE employees_id = $2`, [name, employee_id]);
+    await db.query(`UPDATE employees SET name = $1 WHERE employees_id = $2`, [name, employee_id]);
 
-      res.status(200).json({ message: "Name updated successfully." });
+    res.status(200).json({ message: "Name updated successfully." });
 
   } catch (error) {
-      console.error("Error updating name:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error updating name:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 //{ "employee_id": "EMP0001", "name": "Nishita Updated" }
@@ -643,23 +645,23 @@ app.post('/employee/add-address', async (req, res) => {
   const { employee_id, address } = req.body;
 
   if (!employee_id || !address) {
-      return res.status(400).json({ error: "Employee ID and Address are required." });
+    return res.status(400).json({ error: "Employee ID and Address are required." });
   }
 
   try {
-      const addressId = await generateNextId("address_id", "ADDR", '"employeeaddresses"');
+    const addressId = await generateNextId("address_id", "ADDR", '"employeeaddresses"');
 
-      await db.query(
-          `INSERT INTO "employeeaddresses" (address_id, employee_id, address, created_at) 
+    await db.query(
+      `INSERT INTO "employeeaddresses" (address_id, employee_id, address, created_at) 
            VALUES ($1, $2, $3, NOW())`,
-          [addressId, employee_id, address]
-      );
+      [addressId, employee_id, address]
+    );
 
-      res.status(200).json({ message: "Address added successfully." });
+    res.status(200).json({ message: "Address added successfully." });
 
   } catch (error) {
-      console.error("Error adding address:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error adding address:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
@@ -671,23 +673,23 @@ app.post('/employee/add-phone', async (req, res) => {
   const { employee_id, phone } = req.body;
 
   if (!employee_id || !phone) {
-      return res.status(400).json({ error: "Employee ID and Phone are required." });
+    return res.status(400).json({ error: "Employee ID and Phone are required." });
   }
 
   try {
-      const phoneId = await generateNextId("phone_id", "PHN", "employee_phones");
+    const phoneId = await generateNextId("phone_id", "PHN", "employee_phones");
 
-      await db.query(
-          `INSERT INTO employee_phones (phone_id, employee_id, phone, created_at) 
+    await db.query(
+      `INSERT INTO employee_phones (phone_id, employee_id, phone, created_at) 
            VALUES ($1, $2, $3, NOW())`,
-          [phoneId, employee_id, phone]
-      );
+      [phoneId, employee_id, phone]
+    );
 
-      res.status(200).json({ message: "Phone added successfully." });
+    res.status(200).json({ message: "Phone added successfully." });
 
   } catch (error) {
-      console.error("Error adding phone:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error adding phone:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 //{ "employee_id": "EMP0001", "phone": "9876543210" }
@@ -766,8 +768,8 @@ app.get('/leave/:leave_id', async (req, res) => {
   const { leave_id } = req.params;
 
   try {
-      // Fetch leave details along with employee name and email
-      const leaveQuery = `
+    // Fetch leave details along with employee name and email
+    const leaveQuery = `
           SELECT l.leave_id, l.employee_id, e.name, c.email, 
                  l.start_date, l.end_date, l.leave_type, l.status, 
                  l.reason, l.program_director_status, l.dean_status, 
@@ -778,34 +780,34 @@ app.get('/leave/:leave_id', async (req, res) => {
           WHERE l.leave_id = $1
       `;
 
-      const leaveResult = await db.query(leaveQuery, [leave_id]);
+    const leaveResult = await db.query(leaveQuery, [leave_id]);
 
-      if (leaveResult.rows.length === 0) {
-          return res.status(404).json({ error: "Leave request not found." });
-      }
+    if (leaveResult.rows.length === 0) {
+      return res.status(404).json({ error: "Leave request not found." });
+    }
 
-      res.status(200).json({ leave: leaveResult.rows[0] });
+    res.status(200).json({ leave: leaveResult.rows[0] });
 
   } catch (error) {
-      console.error("Error fetching leave details:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error fetching leave details:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
 //to get all leaves record of a perticular employee
 app.get('/employee/:employee_id/leave', async (req, res) => {
   try {
-      const { employee_id } = req.params;
-      const result = await db.query("SELECT * FROM public.leave WHERE employee_id = $1", [employee_id]);
+    const { employee_id } = req.params;
+    const result = await db.query("SELECT * FROM public.leave WHERE employee_id = $1", [employee_id]);
 
-      if (result.rows.length === 0) {
-          return res.status(404).json({ message: "No leave records found for this employee." });
-      }
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "No leave records found for this employee." });
+    }
 
-      res.json(result.rows);  
+    res.json(result.rows);
   } catch (error) {
-      console.error("Error fetching leave requests:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error fetching leave requests:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
@@ -814,23 +816,23 @@ app.get('/employee/:employee_id/leave', async (req, res) => {
 //to get all leave request
 app.get('/leaves', async (req, res) => {
   try {
-      const leaveQuery = `
+    const leaveQuery = `
           SELECT l.*, e.name, e.employees_id 
           FROM public.leave l
           JOIN employees e ON l.employee_id = e.employees_id
           ORDER BY l.created_at DESC
       `;
 
-      const leaveResult = await db.query(leaveQuery);
+    const leaveResult = await db.query(leaveQuery);
 
-      if (leaveResult.rows.length === 0) {
-          return res.status(404).json({ message: "No leave requests found." });
-      }
+    if (leaveResult.rows.length === 0) {
+      return res.status(404).json({ message: "No leave requests found." });
+    }
 
-      res.status(200).json({ leaves: leaveResult.rows });
+    res.status(200).json({ leaves: leaveResult.rows });
   } catch (error) {
-      console.error("Error fetching all leave requests:", error);
-      res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error fetching all leave requests:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
@@ -838,16 +840,16 @@ app.get('/leaves', async (req, res) => {
 // GET all leave applications approved by PD but pending for Dean
 app.get('/leave/pending/dean', async (req, res) => {
   try {
-      const query = `
+    const query = `
           SELECT * FROM leave 
           WHERE program_director_status = 'approved' 
             AND dean_status = 'pending'
       `;
-      const result = await db.query(query);
-      res.status(200).json(result.rows);
+    const result = await db.query(query);
+    res.status(200).json(result.rows);
   } catch (error) {
-      console.error('Error fetching pending leave applications for Dean:', error.message);
-      res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Error fetching pending leave applications for Dean:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
@@ -886,7 +888,7 @@ app.put('/leave/update-status', async (req, res) => {
           WHERE leave_id = $2
         `;
         values = [status, leave_id];
-       } else {
+      } else {
         // Just update dean_status
         query = `
           UPDATE public.leave
@@ -910,13 +912,14 @@ app.put('/leave/update-status', async (req, res) => {
         `;
         values = [status, leave_id];
       } else {
-      query = `
+        query = `
         UPDATE public.leave
         SET ${columnToUpdate} = $1,
             updated_at = CURRENT_DATE
         WHERE leave_id = $2
       `;
-      values = [status, leave_id];}
+        values = [status, leave_id];
+      }
 
     } else {
       return res.status(400).json({ message: 'Invalid role. Use "dean" or "program director".' });
@@ -937,7 +940,7 @@ app.put('/leave/update-status', async (req, res) => {
 
 app.get('/leave/pending', async (req, res) => {
   try {
-      const result = await db.query(`
+    const result = await db.query(`
           SELECT *
           FROM public.leave
           WHERE program_director_status ILIKE 'pending'
@@ -946,14 +949,14 @@ app.get('/leave/pending', async (req, res) => {
           ORDER BY created_at DESC
       `);
 
-      if (result.rows.length === 0) {
-          return res.status(404).json({ message: 'No pending leave applications found.' });
-      }
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'No pending leave applications found.' });
+    }
 
-      res.status(200).json(result.rows);
+    res.status(200).json(result.rows);
   } catch (error) {
-      console.error('Error fetching pending leave applications:', error.message);
-      res.status(500).json({ error: 'Internal server error' });
+    console.error('Error fetching pending leave applications:', error.message);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
