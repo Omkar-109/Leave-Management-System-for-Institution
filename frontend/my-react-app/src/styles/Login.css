@@ -11,7 +11,7 @@ body {
 
 /* Container centers everything */
 .container {
-    background: url('../images/bg_gbs.jpg') no-repeat center center fixed;
+    background: url('../images/bg_gbs2.jpg') no-repeat center center fixed;
     background-size: cover;
     display: flex;
     flex-direction: column;
