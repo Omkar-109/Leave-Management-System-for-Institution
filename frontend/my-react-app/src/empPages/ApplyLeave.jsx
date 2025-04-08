@@ -20,7 +20,6 @@ const ApplyLeave = () => {
             try {
                 const res = await fetch("http://localhost:3000/leave-types");
                 const data = await res.json();
-                console.log("Fetched leave types:", data);
                 setLeaveTypes(data);
             } catch (err) {
                 console.error("Failed to fetch leave types", err);
@@ -29,8 +28,8 @@ const ApplyLeave = () => {
         };
 
         const user = JSON.parse(localStorage.getItem("user"));
-        if (user?.employee_id) {
-            setEmployeeId(user.employee_id);
+        if (user?.role === "employee") {
+            setEmployeeId(user.id); // ✅ Fixed: using correct key
         }
 
         fetchLeaveTypes();
