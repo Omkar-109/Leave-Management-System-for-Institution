@@ -1132,6 +1132,49 @@ app.post('/leave-approval', async (req, res) => {
   }
 });
 
+// Route to get a specific program director by ID
+app.get('/program-director/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const query = `
+      SELECT * FROM "rolecredentials"
+      WHERE role_credentials_id = $1 AND role_type = 'program director'
+    `;
+    const result = await db.query(query, [id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Program Director not found' });
+    }
+
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error fetching program director:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+app.get('/dean/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const query = `
+      SELECT * FROM "rolecredentials"
+      WHERE role_credentials_id = $1 AND role_type = 'dean'
+    `;
+    const result = await db.query(query, [id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Dean not found' });
+    }
+
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error fetching dean:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 
 
 app.listen(port, () => {
