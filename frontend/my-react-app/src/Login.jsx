@@ -92,7 +92,7 @@ const Login = () => {
     return (
         <div className="container">
             <div className="title-box">
-                <h1>University</h1>
+                <h1>Goa Business School</h1>
             </div>
 
             <div className="login-box">

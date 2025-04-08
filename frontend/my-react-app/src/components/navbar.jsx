@@ -68,7 +68,7 @@ const Navbar = () => {
 
     return (
         <nav className="navbar">
-            <div className="navbar-title">University</div>
+            <div className="navbar-title">Goa Business School</div>
 
             <div className="navbar-user">
                 <button
