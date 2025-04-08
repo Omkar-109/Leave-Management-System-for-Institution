@@ -60,7 +60,7 @@ const RegisterEmployee = () => {
         <h2>Register New Employee</h2>
 
         {successMsg && <p style={{ color: 'green' }}>{successMsg}</p>}
-        {generatedPassword && <p>{generatedPassword}</p>}
+       {/* {generatedPassword && <p>{generatedPassword}</p>} */}
         {errorMsg && <p style={{ color: 'red' }}>{errorMsg}</p>}
 
         <form onSubmit={handleSubmit}>
